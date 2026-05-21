@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'portfolio_app/style.css' %}">
 </head>
 <body>
     <!-- Background Elements -->
@@ -58,7 +59,7 @@
             <div class="hero-image-container hidden-initial right">
                 <div class="image-wrapper">
                     <!-- Profile Photo -->
-                    <img src="profile.jpg" alt="Bose A M - Full Stack Developer" class="profile-photo" loading="eager">
+                    <img src="{% static 'portfolio_app/profile.jpg' %}" alt="Bose A M - Full Stack Developer" class="profile-photo" loading="eager">
                 </div>
             </div>
             <div class="scroll-indicator">
@@ -357,6 +358,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="{% static 'portfolio_app/script.js' %}"></script>
 </body>
 </html>
