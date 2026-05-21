@@ -115,248 +115,141 @@ const modalCloseBtn = document.getElementById('modal-close-btn');
 
 const projectReadmes = {
     nexus: `
-<div class="readme-content">
-    <h1>Nexus – AI Voice Assistant Platform</h1>
-    <h2>📋 Project Overview</h2>
-    <p>Nexus is a modern, full-stack AI voice assistant web application that integrates cutting-edge AI capabilities with a sleek, responsive user interface. Powered by Groq's high-performance AI API, Nexus provides users with an intelligent conversational partner that supports voice input, code syntax highlighting, and advanced file management features.</p>
-    
-    <h2>✨ Key Features</h2>
-    <h3>🤖 AI Capabilities</h3>
-    <ul>
-        <li><strong>Groq AI Integration:</strong> High-speed AI responses using Groq's API.</li>
-        <li><strong>Code Syntax Highlighting:</strong> Automatic formatting for Python, JavaScript, and CSS code blocks.</li>
-        <li><strong>Markdown Support:</strong> Rich text rendering with marked.js library.</li>
-        <li><strong>Tool Integration:</strong> AI can execute custom tools:
-            <ul>
-                <li>Read files from the system</li>
-                <li>Write files to the system</li>
-                <li>Execute system commands</li>
-            </ul>
-        </li>
-    </ul>
+     🌌 Nexus — Premium Django AI Voice Assistant Platform
+Nexus is a state-of-the-art, full-stack web application that combines the robust server-side capabilities of Django 6.0 with a high-end, premium Glassmorphism UI and interactive AI features. Designed with sleek futuristic aesthetics and micro-animations, Nexus offers a complete ecosystem including secure authentication, persistent neural link states, conversation session management, speech recognition (voice-to-text), and text-to-speech capabilities.
 
-    <h3>🎙️ Voice & Interface</h3>
-    <ul>
-        <li><strong>Vocal Interface Toggle:</strong> Enable/disable voice-based interactions.</li>
-        <li><strong>Speech Recognition:</strong> Microphone input for hands-free queries.</li>
-        <li><strong>Text-to-Speech:</strong> Voice output for responses.</li>
-        <li><strong>Neural Link Mode:</strong> Premium AI feature toggle for enhanced processing.</li>
-    </ul>
+🎨 Design & Aesthetic Highlights
+Nexus is engineered to provide a mesmerizing user experience from the first interaction:
 
-    <h3>💬 Chat Management</h3>
-    <ul>
-        <li><strong>Chat History:</strong> Persistent conversation history in sidebar.</li>
-        <li><strong>Clear Conversations:</strong> Reset chat history anytime.</li>
-        <li><strong>Download Chat:</strong> Export conversation logs as files.</li>
-        <li><strong>New Chat:</strong> Start fresh conversations.</li>
-        <li><strong>Real-time Typing Indicator:</strong> Visual feedback during AI processing.</li>
-    </ul>
+Neural Glassmorphism: High-fidelity translucent UI panels with subtle frosted glass filters, glowing borders, and modern depth perception.
+Vibrant Cosmic Gradients: Dark theme aesthetics utilizing dark navy backgrounds, electric blue/cyan active accents, and shimmering text titles.
+Animated Orbs & Backdrops: Smoothly floating decorative glowing background orbs that bring the screen to life.
+Seamless Responsiveness: Fully fluid design optimized for multi-platform operation (Desktop, Tablet, and Mobile devices) with an advanced collapsible dashboard sidebar.
+✨ Core Features
+🔐 Modern Django Security & Authentication
+Robust Session Auth: Integrated with Django's native authentication framework for secure login, registration, and logout operations.
+Dynamic Auth UI: A single-page, gorgeous dual-mode authorization interface with sliding transitions to switch between Login and Signup modes seamlessly.
+Identity Validation: Complete frontend and backend validation for passwords, neural signature matching, and username availability.
+🧠 Intelligent Chat & Conversation Ecosystem
+Simulated Intelligent Response: A robust local processing pipeline with custom simulated latency, built as a plug-and-play architecture ready for direct LLM integration.
+Persistent Neural Sessions: Session histories are dynamically stored in browser localStorage, allowing users to create, switch between, and permanently delete past chat sessions from the sidebar.
+Typing & Connection Indicators: High-fidelity micro-animations showing connection statuses and loading states.
+Advanced Markdown Rendering: Powered by Marked.js to render beautifully styled headers, bulleted lists, and tables inside chat messages.
+Interactive Code Highlighting: Uses Prism.js for syntax-highlighted blocks of code, complete with single-click "Copy Code" header banners.
+🎙️ Human-Machine Vocal Interfaces
+Vocal Interface Switch: Toggle neural voice synthesizers on or off as desired.
+Web Speech Recognition: Real-time microphone input enabling hands-free conversation with hands-free form submissions.
+Text-to-Speech Output: Integrated voice synthesizer reading responses back to the user utilizing premium English speech models.
+📥 Utility Features
+Export Chats: Single-click download function allowing users to export their entire conversational log as a cleanly formatted .txt transcript.
+Interactive Controls: Ability to copy or delete individual chat messages directly inside the stream with smooth fade-out animations.
+🛠️ Technology Stack
+Backend
+Django 6.0.3: High-performance, secure Python web framework.
+WhiteNoise 6.12.0: Direct, highly-optimized serving of static assets.
+Gunicorn 25.3.0: Production-ready WSGI HTTP Server.
+SQLite: Lightweight, zero-configuration local database engine.
+Frontend
+HTML5 & CSS3: Modern semantic layout structure with intensive custom CSS variable styling.
+Vanilla JS (ES6+): High-performance, lightweight UI control logic.
+Marked.js: Markdown parser.
+Prism.js: Code block syntax highlighter.
+Font Awesome 6.4: Premium vector icons.
+Google Fonts: "Outfit" typography configuration for a sleek tech typeface.
+📁 Repository Directory Structure
+ai-chatgpt-project/
+├── core/
+│   ├── static/
+│   │   ├── script.js          # Core application logic & UI handlers
+│   │   └── style.css           # Premium glassmorphic styles & keyframe animations
+│   ├── templates/
+│   │   ├── auth.html          # Dual login/registration interface
+│   │   ├── index.html         # Main dashboard and chat view
+│   │   └── splash.html        # Futuristic entry screen
+│   ├── migrations/            # Django database migrations
+│   ├── admin.py               # Django admin configurations
+│   ├── apps.py                # Core application declaration
+│   ├── models.py              # Custom models structure
+│   ├── urls.py                # App routing configuration
+│   └── views.py               # Authentication and page controllers
+├── nexus_project/             # Main Django Project Configuration
+│   ├── asgi.py
+│   ├── settings.py            # Global settings (WhiteNoise, auth configs)
+│   ├── urls.py                # Core system router
+│   └── wsgi.py
+├── age_calculator.py          # Utility script for computing exact age
+├── age_difference.py          # Utility script for comparing ages
+├── build.sh                   # Deployment automation script
+├── db.sqlite3                 # Local database storage
+├── manage.py                  # Django CLI entrypoint
+├── Procfile                   # Production process runner definition
+└── requirements.txt           # Python dependency file
+🚀 Installation & Local Execution
+Follow these straightforward steps to run the Nexus platform on your local machine:
 
-    <h3>🎨 User Experience</h3>
-    <ul>
-        <li><strong>Dark/Light Theme:</strong> Toggle between theme modes.</li>
-        <li><strong>Glassmorphism Design:</strong> Modern frosted glass UI elements.</li>
-        <li><strong>Animated Backgrounds:</strong> Dynamic animated orb effects.</li>
-        <li><strong>Responsive Layout:</strong> Works on desktop, tablet, and mobile.</li>
-        <li><strong>Settings Modal:</strong> Manage API keys and preferences.</li>
-    </ul>
+1. Prerequisites
+Ensure you have the following installed:
 
-    <h3>🔐 Authentication</h3>
-    <ul>
-        <li><strong>User Authentication:</strong> Login/signup system with validation.</li>
-        <li><strong>Session Management:</strong> Local storage for logged-in state.</li>
-        <li><strong>Secure API Key Storage:</strong> Store Groq API keys locally.</li>
-    </ul>
+Python 3.10 or higher
+Git
+2. Clone and Setup Environment
+Navigate to the directory in your terminal and create a Python virtual environment:
 
-    <h2>🛠️ Technology Stack</h2>
-    <h3>Frontend</h3>
-    <ul>
-        <li>HTML5 - Semantic markup structure</li>
-        <li>CSS3 - Modern styling with animations and transitions</li>
-        <li>JavaScript (ES6+) - Vanilla JavaScript for dynamic interactions</li>
-        <li>Prism.js - Code syntax highlighting library</li>
-        <li>Marked.js - Markdown rendering</li>
-        <li>Font Awesome 6.4 - Icon library</li>
-        <li>Google Fonts - Custom typography (Outfit font family)</li>
-    </ul>
-    <h3>Backend</h3>
-    <ul>
-        <li>Python 3.x - Server-side logic</li>
-        <li>Flask - Lightweight web framework</li>
-        <li>Flask-CORS - Cross-Origin Resource Sharing support</li>
-        <li>Groq Python SDK - AI API client</li>
-        <li>Subprocess - System command execution</li>
-    </ul>
-    <h3>External APIs</h3>
-    <ul>
-        <li>Groq API - Advanced AI model inference</li>
-        <li>Web Speech API - Browser voice recognition</li>
-    </ul>
+# Create a virtual environment
+python -m venv venv
 
-    <h2>📁 Project Structure</h2>
-    <pre><code>ai chatgpt project/
-├── index.html              # Main chat interface
-├── login.html              # User authentication page
-├── splash.html             # Splash/welcome screen
-├── style.css               # Global styling
-├── script.js               # Main application logic
-├── login.js                # Authentication handler
-├── test.js                 # Testing utilities
-├── app.py                  # Flask backend server
-├── age_calculator.py       # Age calculation utility
-├── age_difference.py       # Age comparison utility
-└── README.md               # Project documentation</code></pre>
-
-    <h2>📂 File Descriptions</h2>
-    <h3>Frontend Files</h3>
-    <ul>
-        <li><strong>index.html:</strong> Main application interface with chat box, sidebar, and settings modal. Contains glassmorphism UI components with animated background orbs. Integrates Prism.js for code highlighting and Marked.js for markdown rendering.</li>
-        <li><strong>login.html:</strong> User authentication interface with form slider. Supports login and signup functionality. Styled with modern glassmorphism design.</li>
-        <li><strong>splash.html:</strong> Welcome/splash screen displayed before login. First-time user experience. Redirects to login page for authentication.</li>
-        <li><strong>style.css:</strong> Comprehensive styling for all pages. Responsive design breakpoints. Animations: shimmer effects, typing indicators, orb animations. Glassmorphism effects and neural design elements. Theme variables for dark/light mode.</li>
-        <li><strong>script.js:</strong> Core application logic. Chat message handling and rendering. API communication with Flask backend. Voice recognition and synthesis. Settings management (theme, API keys). Chat history management. Modal interactions.</li>
-        <li><strong>login.js:</strong> Authentication logic, form validation, login/signup handling, and session management with localStorage.</li>
-        <li><strong>test.js:</strong> Testing utilities for development and debugging helpers.</li>
-    </ul>
-    <h3>Backend Files</h3>
-    <ul>
-        <li><strong>app.py:</strong> Flask application with REST API endpoints, CORS configuration, Groq API integration for AI chat processing, tool execution logic, and error handling. Defines tools: read_file(), write_file(), run_command().</li>
-    </ul>
-    <h3>Utility Files</h3>
-    <ul>
-        <li><strong>age_calculator.py:</strong> Calculates user age from birth date. Input: birth year, month, day. Output: Current age in years.</li>
-        <li><strong>age_difference.py:</strong> Calculates age difference between two people. Utility for age comparisons.</li>
-    </ul>
-
-    <h2>🚀 Installation & Setup</h2>
-    <h3>Prerequisites</h3>
-    <ul>
-        <li>Python 3.8+</li>
-        <li>Modern web browser with JavaScript enabled</li>
-        <li>Groq API key</li>
-    </ul>
-    <h3>Backend Setup</h3>
-    <ol>
-        <li>Install Python Dependencies:
-            <pre><code>pip install flask flask-cors groq</code></pre>
-        </li>
-        <li>Set Environment Variables:
-            <pre><code># On Unix-like systems:
-export GROQ_API_KEY="your-api-key-here"
+# Activate the virtual environment
 # On Windows:
-set GROQ_API_KEY=your-api-key-here</code></pre>
-        </li>
-        <li>Run Flask Server:
-            <pre><code>python app.py</code></pre>
-            Server runs on http://localhost:5000 by default.
-        </li>
-    </ol>
-    <h3>Frontend Setup</h3>
-    <ol>
-        <li>Serve HTML Files:
-            <pre><code>python -m http.server 8000</code></pre>
-            Access at http://localhost:8000.
-        </li>
-        <li>Configure API Endpoint: Update the fetch URL in script.js to point to your backend. Default: http://localhost:5000/chat.</li>
-    </ol>
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+3. Install Dependencies
+Install all required libraries specified in the project manifest:
 
-    <h2>💻 Usage</h2>
-    <ol>
-        <li>Start Backend Server: <code>python app.py</code></li>
-        <li>Serve Frontend: <code>python -m http.server 8000</code> (or use VS Code Live Server extension)</li>
-        <li>Open in Browser: Navigate to http://localhost:8000/splash.html, complete authentication, and start chatting.</li>
-    </ol>
-    <h3>User Features</h3>
-    <ul>
-        <li><strong>Send Message:</strong> Type in input box and press Enter or click Send button.</li>
-        <li><strong>Voice Chat:</strong> Click microphone icon to speak queries.</li>
-        <li><strong>Theme Toggle:</strong> Use sun/moon icon to switch themes.</li>
-        <li><strong>Settings:</strong> Click gear icon to manage API key.</li>
-        <li><strong>Chat History:</strong> Access previous conversations from sidebar.</li>
-        <li><strong>Download Chat:</strong> Export current conversation as text file.</li>
-        <li><strong>Clear Chat:</strong> Remove all messages from current session.</li>
-        <li><strong>Logout:</strong> End session and return to login.</li>
-    </ul>
+pip install -r requirements.txt
+4. Apply Database Migrations
+Initialize your database and apply all default schemas:
 
-    <h2>🔌 API Endpoints</h2>
-    <h3>POST /chat</h3>
-    <p>Chat with AI.</p>
-    <p>Request Body:</p>
-    <pre><code>{
-  "messages": [
-    {
-      "role": "user",
-      "content": "Your message here"
-    }
-  ],
-  "api_key": "your-groq-api-key"
-}</code></pre>
-    <p>Response:</p>
-    <pre><code>{
-  "response": "AI's response text",
-  "tool_calls": []
-}</code></pre>
+python manage.py migrate
+5. Create a Superuser (Optional)
+To access the Django Admin Dashboard at /admin/, register an administrator:
 
-    <h2>🛠️ AI Tools Available</h2>
-    <ol>
-        <li><strong>read_file:</strong> Reads file contents from the system. Parameters: filepath (string). Returns: File contents or error.</li>
-        <li><strong>write_file:</strong> Writes or creates files on the system. Parameters: filepath (string), content (string). Returns: Success/failure.</li>
-        <li><strong>run_command:</strong> Executes system commands. Parameters: command (string). Returns: Command output (STDOUT/STDERR). Timeout: 15s.</li>
-    </ol>
+python manage.py createsuperuser
+6. Spin Up the Development Server
+Run the local server:
 
-    <h2>⚙️ Configuration</h2>
-    <h3>LocalStorage Settings</h3>
-    <ul>
-        <li>isLoggedIn - Authentication status (true/false)</li>
-        <li>groqApiKey - Stored Groq API key</li>
-        <li>chatHistory - Previous conversations</li>
-        <li>userTheme - Selected theme (dark/light)</li>
-        <li>neuralLinkEnabled - Neural Link feature status</li>
-        <li>vocalInterfaceEnabled - Voice interface status</li>
-    </ul>
+python manage.py runserver
+Once initialized, open your browser and navigate to: 👉 http://127.0.0.1:8000/
 
-    <h2>🎨 Design Elements</h2>
-    <h3>Color Scheme</h3>
-    <ul>
-        <li>Primary Background: Dark navy/black with gradient</li>
-        <li>Accent Color: Cyan/electric blue for neural elements</li>
-        <li>Glassmorphism: Semi-transparent frosted panels</li>
-        <li>Animated Orbs: Floating background decorations</li>
-    </ul>
-    <h3>Typography</h3>
-    <ul>
-        <li>Font Family: "Outfit" from Google Fonts</li>
-        <li>Weights: 300, 400, 600</li>
-    </ul>
-    <h3>Animations</h3>
-    <ul>
-        <li>Shimmer Effect: Text shimmer on titles</li>
-        <li>Typing Indicator: Animated dots during processing</li>
-        <li>Orb Animation: Floating background elements</li>
-        <li>Transitions: Smooth CSS transitions on interactions</li>
-    </ul>
+☁️ Production Deployment
+Nexus is fully configured for continuous integration and direct cloud deployment platforms like Render, Heroku, or Railway:
 
-    <h2>📝 Recent Features</h2>
-    <ul>
-        <li>Groq AI integration with function calling</li>
-        <li>Voice recognition and speech synthesis</li>
-        <li>Code syntax highlighting with Prism.js</li>
-        <li>Chat history management</li>
-        <li>Dark/light theme support</li>
-        <li>Settings modal for API key management</li>
-        <li>File I/O and command execution capabilities</li>
-        <li>Responsive mobile design</li>
-        <li>Session persistence with localStorage</li>
-    </ul>
+Build Script (build.sh)
+When deploying, the host platform executes build.sh automatically to manage build phases:
 
-    <h2>🐛 Troubleshooting</h2>
-    <ul>
-        <li><strong>Issue: "API Key Invalid"</strong> - Verify your Groq API key is correct and has sufficient quota.</li>
-        <li><strong>Issue: Voice Input Not Working</strong> - Enable microphone permissions in browser and ensure Web Speech API support.</li>
-        <li><strong>Issue: Backend Connection Error</strong> - Verify Flask server is running and check CORS settings.</li>
-        <li><strong>Issue: Messages Not Sending</strong> - Clear browser cache/localStorage and check developer console.</li>
-    </ul>
-</div>
+#!/usr/bin/env bash
+set -o errexit
+
+pip install -r requirements.txt
+python manage.py collectstatic --no-input
+python manage.py migrate
+Production WSGI (Procfile)
+The application includes a Procfile designating Gunicorn to orchestrate the web worker processes:
+
+web: gunicorn nexus_project.wsgi
+⚙️ Configuration & Key Settings
+nexus_project/settings.py highlights:
+Static Asset Handling: WhiteNoiseMiddleware is positioned directly below SecurityMiddleware for lightning-fast compression and caching of frontend resources.
+Security Features: Includes configurable CSRF_TRUSTED_ORIGINS and redirects for standard django authentication variables:
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'login'
+📖 Feature Walkthrough & Operations
+Welcome: Navigate to http://127.0.0.1:8000/ to experience the beautiful splash screen. Click Initialize Connection to enter the Auth terminal.
+Authentication: Switch between login and signup in auth.html using the smooth toggle slider. Register a new user profile and log in.
+Neural Interface: Once loaded, click the Neural Link toggle on the bottom left sidebar to connect. This simulates an neural alignment and unlocks the prompt console!
+Hands-Free Chatting: Click the Microphone icon to grant browser permissions, speak your message, and watch it auto-submit when you finish talking. Toggle the Vocal Interface switch to have the assistant read its output back to you.
+Export Logs: At any point, hit the Download Chat button on the bottom of the page to download your session transcripts.
 `,
     gaming: `
 <div class="readme-content">
