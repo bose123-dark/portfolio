@@ -1,18 +1,18 @@
 /* =====================================================
    BOSE A M — Premium Portfolio Script
-   Tech: GSAP + Draggable + ScrollTrigger + Lenis
+   Tech: GSAP + ScrollTrigger + Lenis + Custom Cursor
    ===================================================== */
 
 /* ─────────────────────────────────────────
    1. LENIS SMOOTH SCROLL
-   ───────────────────────────────────────── */
+───────────────────────────────────────── */
 const lenis = new Lenis({
     duration: 1.4,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     direction: 'vertical',
     smooth: true,
     smoothTouch: false,
-    touchMultiplier: 1.8,
+    touchMultiplier: 2,
 });
 
 function raf(time) {
@@ -28,35 +28,59 @@ gsap.ticker.lagSmoothing(0);
 
 /* ─────────────────────────────────────────
    2. GSAP PLUGIN REGISTRATION
-   ───────────────────────────────────────── */
+───────────────────────────────────────── */
 gsap.registerPlugin(ScrollTrigger, Draggable);
 
 /* ─────────────────────────────────────────
-   3. CUSTOM LENS RETICLE CURSOR
-   ───────────────────────────────────────── */
+   3. CUSTOM CURSOR & FLOATING ELEMENTS (Optimized Ticker)
+───────────────────────────────────────── */
 const cursorDot = document.getElementById('cursorDot');
 const cursorOutline = document.getElementById('cursorOutline');
+const floatIcons = document.querySelectorAll('.float-icon');
+const cloudIcons = document.querySelectorAll('.skill-cloud-icon');
+
+let targetX = 0, targetY = 0;
+let normX = 0, normY = 0;
+
+window.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    normX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+    normY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+});
 
 if (cursorDot && cursorOutline) {
-    let dotX = 0, dotY = 0;
     let outX = 0, outY = 0;
 
-    window.addEventListener('mousemove', (e) => {
-        dotX = e.clientX;
-        dotY = e.clientY;
-    });
+    // Combined loop running at 60fps to prevent layout thrashing
+    function animateLoop() {
+        gsap.set(cursorDot, { x: targetX, y: targetY });
 
-    // Smooth cursor follow
-    function animateCursor() {
-        gsap.set(cursorDot, { x: dotX, y: dotY });
-
-        outX += (dotX - outX) * 0.12;
-        outY += (dotY - outY) * 0.12;
+        outX += (targetX - outX) * 0.12;
+        outY += (targetY - outY) * 0.12;
         gsap.set(cursorOutline, { x: outX, y: outY });
 
-        requestAnimationFrame(animateCursor);
+        // Float icons (Hero)
+        floatIcons.forEach(icon => {
+            const depth = parseFloat(icon.dataset.depth || 0.35);
+            gsap.set(icon, {
+                x: normX * depth * 35,
+                y: normY * depth * 35
+            });
+        });
+
+        // Skills cloud icons
+        cloudIcons.forEach(icon => {
+            const depth = parseFloat(icon.dataset.depth || 0.3);
+            gsap.set(icon, {
+                x: normX * depth * 35,
+                y: normY * depth * 22
+            });
+        });
+
+        requestAnimationFrame(animateLoop);
     }
-    animateCursor();
+    animateLoop();
 
     // Hover effects
     const hoverTargets = document.querySelectorAll(
@@ -78,8 +102,91 @@ if (cursorDot && cursorOutline) {
 }
 
 /* ─────────────────────────────────────────
+   3A. INTERACTIVE PLAY-PULL LANYARD CARD
+───────────────────────────────────────── */
+const cardContainer = document.getElementById('heroImageContainer');
+const lanyardCard = document.getElementById('heroImage');
+const lanyardPath = document.getElementById('lanyardPath');
+
+if (cardContainer && lanyardCard && lanyardPath) {
+    let startX, startY, initialEndX, initialEndY;
+
+    function initLanyardCoords() {
+        const containerRect = cardContainer.getBoundingClientRect();
+        const cardRect = lanyardCard.getBoundingClientRect();
+        
+        startX = containerRect.width / 2;
+        startY = 10;
+        
+        initialEndX = (cardRect.left + cardRect.width / 2) - containerRect.left;
+        initialEndY = cardRect.top - containerRect.top + 6;
+    }
+
+    function updateLanyard(xOffset = 0, yOffset = 0) {
+        if (startX === undefined) initLanyardCoords();
+        
+        const endX = initialEndX + xOffset;
+        const endY = initialEndY + yOffset;
+        
+        const ctrlX = (startX + endX) / 2;
+        const ctrlY = (startY + endY) / 2 + Math.abs(endX - startX) * 0.15 + 10;
+        
+        lanyardPath.setAttribute('d', `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`);
+    }
+
+    // Initialize Draggable interface on ID card
+    Draggable.create(lanyardCard, {
+        type: 'x,y',
+        edgeResistance: 0.5,
+        bounds: cardContainer,
+        throwProps: false,
+        onDragStart: function() {
+            document.body.classList.add('dragging-badge');
+        },
+        onDrag: function() {
+            updateLanyard(this.x, this.y);
+            // Twist rotation based on drag movement velocity & displacement
+            gsap.set(lanyardCard, {
+                rotateZ: this.x * 0.09,
+                rotateY: this.x * 0.05,
+                rotateX: -this.y * 0.04
+            });
+        },
+        onDragEnd: function() {
+            document.body.classList.remove('dragging-badge');
+            // Elastic spring back to home anchor point
+            gsap.to(lanyardCard, {
+                x: 0,
+                y: 0,
+                rotateZ: 0,
+                rotateY: 0,
+                rotateX: 0,
+                duration: 1.4,
+                ease: 'elastic.out(1, 0.4)',
+                onUpdate: function() {
+                    const xVal = gsap.getProperty(lanyardCard, "x");
+                    const yVal = gsap.getProperty(lanyardCard, "y");
+                    updateLanyard(xVal, yVal);
+                }
+            });
+        }
+    });
+
+    // Run first time to align path coordinate
+    setTimeout(() => {
+        initLanyardCoords();
+        updateLanyard(0, 0);
+    }, 450);
+
+    window.addEventListener('resize', () => {
+        initLanyardCoords();
+        updateLanyard(0, 0);
+    });
+}
+
+/* ─────────────────────────────────────────
    4. MAGNETIC BUTTONS
-   ───────────────────────────────────────── */
+───────────────────────────────────────── */
 document.querySelectorAll('.magnetic-btn').forEach(btn => {
     btn.addEventListener('mousemove', (e) => {
         const rect = btn.getBoundingClientRect();
@@ -99,27 +206,29 @@ document.querySelectorAll('.magnetic-btn').forEach(btn => {
 });
 
 /* ─────────────────────────────────────────
-   5. FLOATING DUST PARTICLES
-   ───────────────────────────────────────── */
+   5. FLOATING PARTICLES GENERATOR
+───────────────────────────────────────── */
 function createParticles() {
     const container = document.getElementById('particlesContainer');
     if (!container) return;
-    const count = 25;
+    const count = 30;
 
     for (let i = 0; i < count; i++) {
         const p = document.createElement('div');
         p.classList.add('particle');
 
-        const size = Math.random() * 3 + 1.5;
+        const size = Math.random() * 4 + 2;
         const left = Math.random() * 100;
-        const duration = Math.random() * 25 + 15;
-        const delay = Math.random() * 25;
+        const duration = Math.random() * 20 + 15;
+        const delay = Math.random() * 20;
+        const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
 
         p.style.cssText = `
             width: ${size}px;
             height: ${size}px;
             left: ${left}%;
-            background: var(--gold);
+            background: ${color};
             animation-duration: ${duration}s;
             animation-delay: -${delay}s;
         `;
@@ -129,8 +238,8 @@ function createParticles() {
 createParticles();
 
 /* ─────────────────────────────────────────
-   6. NAVBAR — Scroll active triggers
-   ───────────────────────────────────────── */
+   6. NAVBAR — Scroll Effect + Active Links + Progress
+───────────────────────────────────────── */
 const navbar = document.getElementById('navbar');
 const navProgress = document.getElementById('navProgress');
 const sections = document.querySelectorAll('section');
@@ -139,11 +248,9 @@ const navLinks = document.querySelectorAll('.nav-link');
 lenis.on('scroll', ({ scroll }) => {
     // Scrolled class
     if (scroll > 60) {
-        navbar.classList.add('py-3', 'bg-obsidian/90');
-        navbar.classList.remove('py-5', 'bg-obsidian/40');
+        navbar.classList.add('scrolled');
     } else {
-        navbar.classList.add('py-5', 'bg-obsidian/40');
-        navbar.classList.remove('py-3', 'bg-obsidian/90');
+        navbar.classList.remove('scrolled');
     }
 
     // Progress bar
@@ -159,129 +266,51 @@ lenis.on('scroll', ({ scroll }) => {
         }
     });
     navLinks.forEach(link => {
-        link.classList.remove('active', 'text-cinematic-gold');
-        link.classList.add('text-neutral-400');
+        link.classList.remove('active');
         if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active', 'text-cinematic-gold');
-            link.classList.remove('text-neutral-400');
+            link.classList.add('active');
         }
     });
 });
 
 /* ─────────────────────────────────────────
-   7. HAMBURGER MOBILE NAVIGATION
-   ───────────────────────────────────────── */
+   7. HAMBURGER MOBILE NAV
+───────────────────────────────────────── */
 const hamburger = document.getElementById('hamburger');
-const mobileOverlay = document.querySelector('.nav-mobile-overlay');
+const navLinksContainer = document.getElementById('navLinks');
 
-if (hamburger) {
-    // Create mobile menu overlay list dynamically if not hardcoded
-    const navLinksList = document.querySelectorAll('.nav-link');
-    const overlayMenu = document.createElement('ul');
-    overlayMenu.className = 'nav-mobile-overlay';
-    
-    navLinksList.forEach(link => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = link.href;
-        a.textContent = link.textContent;
-        a.className = 'nav-link';
-        a.addEventListener('click', () => {
-            overlayMenu.classList.remove('active');
-            hamburger.classList.remove('open');
-            lenis.start();
-        });
-        li.appendChild(a);
-        overlayMenu.appendChild(li);
+// Create mobile overlay
+const mobileOverlay = document.createElement('ul');
+mobileOverlay.classList.add('nav-mobile-overlay');
+navLinks.forEach(link => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = link.href;
+    a.textContent = link.textContent;
+    a.className = 'nav-link';
+    a.addEventListener('click', () => {
+        mobileOverlay.classList.remove('active');
+        hamburger.classList.remove('open');
     });
-    document.body.appendChild(overlayMenu);
+    li.appendChild(a);
+    mobileOverlay.appendChild(li);
+});
+document.body.appendChild(mobileOverlay);
 
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('open');
-        overlayMenu.classList.toggle('active');
-        if (overlayMenu.classList.contains('active')) {
-            lenis.stop();
-        } else {
-            lenis.start();
-        }
-    });
-}
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileOverlay.classList.toggle('active');
+});
 
 /* ─────────────────────────────────────────
-   8. INTERACTIVE PLAY-PULL LANYARD CARD
-   ───────────────────────────────────────── */
-const cardContainer = document.getElementById('heroImageContainer');
-const lanyardCard = document.getElementById('heroImage');
-const lanyardPath = document.getElementById('lanyardPath');
-
-if (cardContainer && lanyardCard && lanyardPath) {
-    
-    function updateLanyard() {
-        const containerRect = cardContainer.getBoundingClientRect();
-        const cardRect = lanyardCard.getBoundingClientRect();
-        
-        // Origin coordinates at top-center of container
-        const startX = containerRect.width / 2;
-        const startY = 10;
-        
-        // Connector coordinates at top-center of the card
-        const endX = (cardRect.left + cardRect.width / 2) - containerRect.left;
-        const endY = cardRect.top - containerRect.top + 6;
-        
-        // Control point calculations for elegant sag/pull curve
-        const ctrlX = (startX + endX) / 2;
-        const ctrlY = (startY + endY) / 2 + Math.abs(endX - startX) * 0.15 + 10;
-        
-        lanyardPath.setAttribute('d', `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`);
-    }
-
-    // Initialize Draggable interface on ID card
-    Draggable.create(lanyardCard, {
-        type: 'x,y',
-        edgeResistance: 0.5,
-        bounds: cardContainer,
-        throwProps: false,
-        onDragStart: function() {
-            document.body.classList.add('dragging-badge');
-        },
-        onDrag: function() {
-            updateLanyard();
-            // Twist rotation based on drag movement velocity & displacement
-            gsap.set(lanyardCard, {
-                rotateZ: this.x * 0.09,
-                rotateY: this.x * 0.05,
-                rotateX: -this.y * 0.04
-            });
-        },
-        onDragEnd: function() {
-            document.body.classList.remove('dragging-badge');
-            // Elastic spring back to home anchor point
-            gsap.to(lanyardCard, {
-                x: 0,
-                y: 0,
-                rotateZ: 0,
-                rotateY: 0,
-                rotateX: 0,
-                duration: 1.4,
-                ease: 'elastic.out(1, 0.4)',
-                onUpdate: updateLanyard
-            });
-        }
-    });
-
-    // Run first time to align path coordinate
-    setTimeout(updateLanyard, 300);
-    window.addEventListener('resize', updateLanyard);
-}
-
-/* ─────────────────────────────────────────
-   9. HERO ENTRANCE SEQUENCES
-   ───────────────────────────────────────── */
+   8. HERO ENTRANCE ANIMATIONS (GSAP)
+───────────────────────────────────────── */
 const heroTL = gsap.timeline({ delay: 0.3 });
 
 heroTL
     .to('.greeting', {
-        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out'
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        from: { y: 30 }
     })
     .to('.name', {
         opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
@@ -298,13 +327,17 @@ heroTL
     .to('.status-badge', {
         opacity: 1, y: 0, duration: 0.5, ease: 'power3.out',
     }, '-=0.3')
+    .to('#heroImageContainer', {
+        opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.5)',
+        from: { y: 50 }
+    }, '-=1.2')
     .to('#scrollIndicator', {
         opacity: 0.7, duration: 0.5, ease: 'power2.out',
     }, '-=0.2');
 
 /* ─────────────────────────────────────────
-   10. TYPING EFFECT
-   ───────────────────────────────────────── */
+   9. TYPING EFFECT
+───────────────────────────────────────── */
 const typedTextSpan = document.querySelector('.typed-text');
 const cursorSpan = document.querySelector('.cursor');
 const textArray = ['Full Stack Developer', 'AI Enthusiast', 'Problem Solver'];
@@ -339,36 +372,13 @@ function erase() {
     }
 }
 
-// Start typing trigger
-setTimeout(type, 2600);
+// Start typing after hero animation
+setTimeout(type, 2800);
 
 /* ─────────────────────────────────────────
-   11. PARALLAX FLOATING ELEMENTS
-   ───────────────────────────────────────── */
+   10. PARALLAX FLOATING ICONS (Hero - Combined Cursor Loop)
+───────────────────────────────────────── */
 const floatIcons = document.querySelectorAll('.float-icon');
-
-window.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-
-    floatIcons.forEach(icon => {
-        const depth = parseFloat(icon.dataset.depth || 0.35);
-        const xMove = dx * depth * 40;
-        const yMove = dy * depth * 40;
-        gsap.to(icon, {
-            x: xMove,
-            y: yMove,
-            duration: 0.8,
-            ease: 'power2.out',
-        });
-    });
-});
-
-/* ─────────────────────────────────────────
-   12. SKILLS CLOUD MOUSE PARALLAX
-   ───────────────────────────────────────── */
 const cloudIcons = document.querySelectorAll('.skill-cloud-icon');
 
 window.addEventListener('mousemove', (e) => {
@@ -377,38 +387,30 @@ window.addEventListener('mousemove', (e) => {
     const dx = (e.clientX - cx) / cx;
     const dy = (e.clientY - cy) / cy;
 
+    floatIcons.forEach(icon => {
+        const depth = parseFloat(icon.dataset.depth || 0.3);
+        gsap.to(icon, { x: dx * depth * 40, y: dy * depth * 40, duration: 0.8, ease: 'power2.out' });
+    });
+    
     cloudIcons.forEach(icon => {
         const depth = parseFloat(icon.dataset.depth || 0.3);
-        const xMove = dx * depth * 35;
-        const yMove = dy * depth * 22;
-        gsap.to(icon, {
-            x: xMove,
-            y: yMove,
-            duration: 1.0,
-            ease: 'power2.out',
-        });
+        gsap.to(icon, { x: dx * depth * 30, y: dy * depth * 20, duration: 1.0, ease: 'power2.out' });
     });
 });
 
-// Stagger entrance for skills cloud icons
+/* ─────────────────────────────────────────
+   11. SKILLS ICON CLOUD ENTRANCE
+───────────────────────────────────────── */
 gsap.from('.skill-cloud-icon', {
-    scrollTrigger: {
-        trigger: '#skills',
-        start: 'top 80%',
-    },
-    opacity: 0,
-    scale: 0,
-    duration: 0.6,
-    stagger: {
-        each: 0.07,
-        from: 'random',
-    },
+    scrollTrigger: { trigger: '#skills', start: 'top 80%' },
+    opacity: 0, scale: 0, duration: 0.6,
+    stagger: { each: 0.08, from: 'random' },
     ease: 'back.out(2)',
 });
 
 /* ─────────────────────────────────────────
-   13. CARD GLOW EFFECT MOUSE BIND
-   ───────────────────────────────────────── */
+   12. CARD GLOW EFFECT (Mouse tracking)
+───────────────────────────────────────── */
 document.querySelectorAll('.skill-category').forEach(card => {
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -420,38 +422,40 @@ document.querySelectorAll('.skill-category').forEach(card => {
 });
 
 /* ─────────────────────────────────────────
-   14. SCROLLTRIGGER SECTION ANIMATIONS
-   ───────────────────────────────────────── */
+   13. GSAP SCROLL ANIMATIONS
+───────────────────────────────────────── */
 
-// Section titles
+// Section Titles
 gsap.utils.toArray('.section-title').forEach(el => {
     gsap.from(el, {
         scrollTrigger: {
             trigger: el,
             start: 'top 88%',
+            toggleActions: 'play none none none',
         },
         opacity: 0,
-        x: -40,
-        duration: 0.8,
+        x: -50,
+        duration: 0.9,
         ease: 'power3.out',
     });
 });
 
-// Fades
+// About text
 gsap.utils.toArray('.gsap-reveal').forEach(el => {
     gsap.to(el, {
         scrollTrigger: {
             trigger: el,
             start: 'top 82%',
+            toggleActions: 'play none none none',
         },
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 0.9,
         ease: 'power3.out',
     });
 });
 
-// Highlights stagger
+// Highlight items stagger
 gsap.utils.toArray('.gsap-reveal-stagger').forEach((el, i) => {
     gsap.to(el, {
         scrollTrigger: {
@@ -466,12 +470,13 @@ gsap.utils.toArray('.gsap-reveal-stagger').forEach((el, i) => {
     });
 });
 
-// Skill categories
+// Skill cards
 gsap.utils.toArray('.gsap-card').forEach((el, i) => {
     gsap.to(el, {
         scrollTrigger: {
             trigger: el,
             start: 'top 85%',
+            toggleActions: 'play none none none',
         },
         opacity: 1,
         y: 0,
@@ -481,7 +486,7 @@ gsap.utils.toArray('.gsap-card').forEach((el, i) => {
     });
 });
 
-// Skill tag entrance pop-ups
+// Skill tags pop-in animation
 document.querySelectorAll('.skill-category').forEach(category => {
     const tags = category.querySelectorAll('.skill-tag');
     ScrollTrigger.create({
@@ -490,9 +495,9 @@ document.querySelectorAll('.skill-category').forEach(category => {
         onEnter: () => {
             gsap.from(tags, {
                 opacity: 0,
-                scale: 0.6,
-                y: 15,
-                stagger: 0.05,
+                scale: 0.5,
+                y: 20,
+                stagger: 0.07,
                 duration: 0.5,
                 ease: 'back.out(2)',
             });
@@ -500,32 +505,36 @@ document.querySelectorAll('.skill-category').forEach(category => {
     });
 });
 
-// Timeline elements
-gsap.utils.toArray('.gsap-timeline-item').forEach((el) => {
+// Timeline items
+gsap.utils.toArray('.gsap-timeline-item').forEach((el, i) => {
+    const isLeft = el.classList.contains('left');
     gsap.to(el, {
         scrollTrigger: {
             trigger: el,
             start: 'top 85%',
+            toggleActions: 'play none none none',
         },
         opacity: 1,
         y: 0,
+        x: 0,
         duration: 0.8,
         ease: 'power3.out',
     });
 
+    // Also animate from left/right
     gsap.from(el.querySelector('.timeline-content'), {
         scrollTrigger: {
             trigger: el,
             start: 'top 85%',
         },
-        x: -30,
+        x: isLeft ? -40 : 40,
         opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
     });
 });
 
-// Timeline dots
+// Timeline dots pulse on enter
 gsap.utils.toArray('.timeline-dot').forEach(dot => {
     ScrollTrigger.create({
         trigger: dot,
@@ -544,7 +553,7 @@ gsap.utils.toArray('.timeline-dot').forEach(dot => {
 // Contact section reveal
 gsap.to('.contact-container', {
     scrollTrigger: {
-        trigger: '#contact',
+        trigger: '.contact-container',
         start: 'top 80%',
     },
     opacity: 1,
@@ -555,25 +564,25 @@ gsap.to('.contact-container', {
 
 // Footer social links
 gsap.from('.social-links a', {
-    scrollTrigger: { trigger: 'footer', start: 'top 95%' },
+    scrollTrigger: { trigger: 'footer', start: 'top 90%' },
     opacity: 0,
-    y: 15,
-    stagger: 0.1,
+    y: 20,
+    stagger: 0.15,
     duration: 0.5,
     ease: 'power3.out',
 });
 
 /* ─────────────────────────────────────────
-   15. HERO IMAGE & TEXT SCROLL PARALLAX
-   ───────────────────────────────────────── */
+   14. SCROLL-BASED PARALLAX (hero image)
+───────────────────────────────────────── */
 gsap.to('#heroImageContainer', {
     scrollTrigger: {
         trigger: '#hero',
         start: 'top top',
         end: 'bottom top',
-        scrub: 1.2,
+        scrub: 1.5,
     },
-    y: 60,
+    y: 80,
     ease: 'none',
 });
 
@@ -584,20 +593,20 @@ gsap.to('.hero-content', {
         end: 'bottom top',
         scrub: 1,
     },
-    y: -30,
+    y: -40,
     opacity: 0.6,
     ease: 'none',
 });
 
 /* ─────────────────────────────────────────
-   16. SKILL TAG LETTER GLOW
-   ───────────────────────────────────────── */
+   15. SKILL TAG LETTER-BY-LETTER HOVER
+───────────────────────────────────────── */
 document.querySelectorAll('.skill-tag').forEach(tag => {
     tag.addEventListener('mouseenter', () => {
         gsap.fromTo(tag, 
-            { boxShadow: '0 0 0px rgba(226,168,80,0)' },
+            { boxShadow: '0 0 0px rgba(99,102,241,0)' },
             { 
-                boxShadow: '0 0 15px rgba(226,168,80,0.3)',
+                boxShadow: '0 0 20px rgba(99,102,241,0.4)',
                 duration: 0.4,
                 ease: 'power2.out'
             }
@@ -605,16 +614,47 @@ document.querySelectorAll('.skill-tag').forEach(tag => {
     });
     tag.addEventListener('mouseleave', () => {
         gsap.to(tag, {
-            boxShadow: '0 0 0px rgba(226,168,80,0)',
+            boxShadow: '0 0 0px rgba(99,102,241,0)',
             duration: 0.4,
         });
     });
 });
 
 /* ─────────────────────────────────────────
-   17. TILT ON HOVER (Project / Social Cards)
-   ───────────────────────────────────────── */
-document.querySelectorAll('.project-card, .social-card').forEach(card => {
+   16. PROJECT CARDS TILT ON HOVER (Optimized)
+───────────────────────────────────────── */
+document.querySelectorAll('.project-card').forEach(card => {
+    let rect = null;
+    card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+    });
+    card.addEventListener('mousemove', (e) => {
+        if (!rect) rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(card, {
+            rotateY: x * 10,
+            rotateX: -y * 6,
+            duration: 0.4,
+            ease: 'power2.out',
+            transformPerspective: 1000,
+        });
+    });
+
+    card.addEventListener('mouseleave', () => {
+        gsap.to(card, {
+            rotateY: 0,
+            rotateX: 0,
+            duration: 0.6,
+            ease: 'elastic.out(1, 0.4)',
+        });
+    });
+});
+
+/* ─────────────────────────────────────────
+   17. SOCIAL CARD TILT ON HOVER
+───────────────────────────────────────── */
+document.querySelectorAll('.social-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -639,21 +679,21 @@ document.querySelectorAll('.project-card, .social-card').forEach(card => {
 });
 
 /* ─────────────────────────────────────────
-   18. LOGO SHIMMER HOVER
-   ───────────────────────────────────────── */
+   18. LOGO ANIMATION
+───────────────────────────────────────── */
 const logo = document.getElementById('navLogo');
 if (logo) {
     logo.addEventListener('mouseenter', () => {
-        gsap.to(logo, { letterSpacing: '1px', duration: 0.4, ease: 'power2.out' });
+        gsap.to(logo, { letterSpacing: '2px', duration: 0.4, ease: 'power2.out' });
     });
     logo.addEventListener('mouseleave', () => {
-        gsap.to(logo, { letterSpacing: '-0.5px', duration: 0.4, ease: 'power2.out' });
+        gsap.to(logo, { letterSpacing: '-1px', duration: 0.4, ease: 'power2.out' });
     });
 }
 
 /* ─────────────────────────────────────────
-   19. BACKGROUND BLOB TRIGGER TRANSITIONS
-   ───────────────────────────────────────── */
+   19. SECTION REVEAL (background glow move)
+───────────────────────────────────────── */
 const blob1 = document.querySelector('.blob-1');
 const blob2 = document.querySelector('.blob-2');
 
@@ -661,10 +701,10 @@ ScrollTrigger.create({
     trigger: '#skills',
     start: 'top center',
     onEnter: () => {
-        gsap.to(blob1, { left: '55%', top: '25%', duration: 3, ease: 'power2.inOut' });
+        gsap.to(blob1, { left: '60%', top: '30%', duration: 3, ease: 'power2.inOut' });
     },
     onLeaveBack: () => {
-        gsap.to(blob1, { left: '-10%', top: '-10%', duration: 2.5, ease: 'power2.inOut' });
+        gsap.to(blob1, { left: '-150px', top: '-150px', duration: 2, ease: 'power2.inOut' });
     },
 });
 
@@ -672,33 +712,19 @@ ScrollTrigger.create({
     trigger: '#projects',
     start: 'top center',
     onEnter: () => {
-        gsap.to(blob2, { right: '15%', bottom: '8%', duration: 3, ease: 'power2.inOut' });
+        gsap.to(blob2, { right: '20%', bottom: '10%', duration: 3, ease: 'power2.inOut' });
     },
 });
 
 /* ─────────────────────────────────────────
-   20. SCROLL INDICATOR DISPLAY
-   ───────────────────────────────────────── */
-ScrollTrigger.create({
-    trigger: '#about',
-    start: 'top 90%',
-    onEnter: () => {
-        gsap.to('#scrollIndicator', { opacity: 0, duration: 0.4 });
-    },
-    onLeaveBack: () => {
-        gsap.to('#scrollIndicator', { opacity: 0.7, duration: 0.4 });
-    },
-});
-
-/* ─────────────────────────────────────────
-   21. CONTACT CTA BUTTON SCALE
-   ───────────────────────────────────────── */
+   20. CONTACT CTA SECTION — Text Shimmer
+───────────────────────────────────────── */
 const contactBtn = document.querySelector('.contact-btn');
 if (contactBtn) {
     contactBtn.addEventListener('mouseenter', () => {
         gsap.to(contactBtn, {
-            scale: 1.05,
-            duration: 0.3,
+            scale: 1.06,
+            duration: 0.35,
             ease: 'power2.out',
         });
     });
@@ -712,13 +738,12 @@ if (contactBtn) {
 }
 
 /* ─────────────────────────────────────────
-   22. PROJECT README MODAL FUNCTIONALITY
-   ───────────────────────────────────────── */
+   21. README MODAL (preserved functionality)
+───────────────────────────────────────── */
 const readmeModal = document.getElementById('readme-modal');
 const modalBodyContent = document.getElementById('modal-body-content');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 
-// Preserve all original readme markdown/HTML content completely
 const projectReadmes = {
     nexus: `
 <div class="readme-content">
@@ -894,9 +919,7 @@ function closeModal() {
     setTimeout(() => { modalBodyContent.innerHTML = ''; }, 400);
 }
 
-if (modalCloseBtn) {
-    modalCloseBtn.addEventListener('click', closeModal);
-}
+modalCloseBtn.addEventListener('click', closeModal);
 
 readmeModal.addEventListener('click', (e) => {
     if (e.target === readmeModal) closeModal();
@@ -907,8 +930,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ─────────────────────────────────────────
-   23. SMOOTH ANCHOR LINK CLICK ROUTING
-   ───────────────────────────────────────── */
+   22. SMOOTH SCROLL for nav links
+───────────────────────────────────────── */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
         const href = anchor.getAttribute('href');
@@ -922,15 +945,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ─────────────────────────────────────────
-   24. CORE SKILLS LIST STAGGER OUT
-   ───────────────────────────────────────── */
+   23. SCROLL INDICATOR FADE OUT
+───────────────────────────────────────── */
+ScrollTrigger.create({
+    trigger: '#about',
+    start: 'top 90%',
+    onEnter: () => {
+        gsap.to('#scrollIndicator', { opacity: 0, duration: 0.5 });
+    },
+    onLeaveBack: () => {
+        gsap.to('#scrollIndicator', { opacity: 0.7, duration: 0.5 });
+    },
+});
+
+/* ─────────────────────────────────────────
+   24. CORE SKILLS LIST STAGGER
+───────────────────────────────────────── */
 ScrollTrigger.create({
     trigger: '#skillCore',
     start: 'top 80%',
     onEnter: () => {
         gsap.from('#skillCore .core-skills-list li', {
             opacity: 0,
-            x: -25,
+            x: -30,
             stagger: 0.1,
             duration: 0.5,
             ease: 'power3.out',
@@ -939,8 +976,8 @@ ScrollTrigger.create({
 });
 
 /* ─────────────────────────────────────────
-   25. PAGE REFRESH TRIGGERS
-   ───────────────────────────────────────── */
+   25. PAGE LOAD — Refresh ScrollTrigger
+───────────────────────────────────────── */
 window.addEventListener('load', () => {
     ScrollTrigger.refresh();
 });
