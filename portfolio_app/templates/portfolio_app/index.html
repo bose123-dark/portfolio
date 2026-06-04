@@ -1,418 +1,632 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bose A M - Full Stack Developer &amp; AI Enthusiast</title>
     <meta name="description" content="Portfolio of Bose A M, an aspiring Full Stack Developer and AI Enthusiast building modern web applications and AI tools.">
-    <!-- Google Fonts -->
+    
+    <!-- Google Fonts: Syne (Cinematic Display) + Outfit (Sleek Sans) + Fira Code (Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Devicons for skill icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
-    <!-- Custom CSS -->
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050505',
+                        cinematic: {
+                            gold: '#e2a850',      /* Warm movie amber/gold */
+                            goldDim: 'rgba(226, 168, 80, 0.15)',
+                            goldGlow: 'rgba(226, 168, 80, 0.4)',
+                            copper: '#b45309',    /* Dark amber */
+                            crimson: '#9f1239',   /* Film noir red */
+                            card: 'rgba(15, 15, 15, 0.7)',
+                            cardBorder: 'rgba(226, 168, 80, 0.08)',
+                            cardBorderHover: 'rgba(226, 168, 80, 0.28)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS for Film Grain, Lens Cursor & Custom Utilities -->
     <link rel="stylesheet" href="{% static 'portfolio_app/style.css' %}">
 </head>
-<body>
-    <!-- Custom Cursor -->
+<body class="bg-obsidian text-neutral-200 font-sans overflow-x-hidden selection:bg-cinematic-goldGlow selection:text-white">
+
+    <!-- Lens Iris / Camera Aperture Custom Cursor -->
     <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-outline" id="cursorOutline"></div>
+    <div class="cursor-outline" id="cursorOutline">
+        <!-- Lens Reticle details inside custom cursor -->
+        <span class="absolute inset-0 border border-cinematic-gold/20 rounded-full scale-75"></span>
+        <span class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-1.5 bg-cinematic-gold/40"></span>
+        <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0.5 h-1.5 bg-cinematic-gold/40"></span>
+        <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-0.5 bg-cinematic-gold/40"></span>
+        <span class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-0.5 bg-cinematic-gold/40"></span>
+    </div>
 
-    <!-- Noise Texture Overlay -->
-    <div class="noise-overlay"></div>
+    <!-- Animating Film Grain Texture Overlay -->
+    <div class="noise-overlay pointer-events-none fixed inset-0 z-50 opacity-[0.035]"></div>
 
-    <!-- Background Elements -->
-    <div class="bg-glow blob-1"></div>
-    <div class="bg-glow blob-2"></div>
-    <div class="bg-glow blob-3"></div>
+    <!-- Cinematic Backlighting / Colored Glowing Orbs -->
+    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-cinematic-crimson/10 blur-[120px] pointer-events-none z-0 blob-1"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-cinematic-gold/5 blur-[140px] pointer-events-none z-0 blob-2"></div>
+    <div class="fixed top-[40%] right-[10%] w-[35vw] h-[35vw] rounded-full bg-emerald-950/10 blur-[100px] pointer-events-none z-0 blob-3"></div>
 
-    <!-- Floating Particles -->
+    <!-- Floating Dust Particles -->
     <div class="particles-container" id="particlesContainer"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-content">
-            <a href="#hero" class="logo" id="navLogo">Bose<span>.</span></a>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#experience" class="nav-link">Experience</a></li>
-                <li><a href="#education" class="nav-link">Education</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#socials" class="nav-link">Profiles</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 w-full z-40 transition-all duration-500 border-b border-white/[0.03] backdrop-blur-md bg-obsidian/40" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#hero" class="font-display text-2xl font-bold tracking-tight text-white hover:text-cinematic-gold transition-colors duration-300" id="navLogo">
+                Bose<span class="text-cinematic-gold">.</span>
+            </a>
+            
+            <ul class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-widest uppercase text-neutral-400" id="navLinks">
+                <li><a href="#about" class="nav-link hover:text-white transition-colors duration-300">About</a></li>
+                <li><a href="#skills" class="nav-link hover:text-white transition-colors duration-300">Skills</a></li>
+                <li><a href="#experience" class="nav-link hover:text-white transition-colors duration-300">Experience</a></li>
+                <li><a href="#education" class="nav-link hover:text-white transition-colors duration-300">Education</a></li>
+                <li><a href="#projects" class="nav-link hover:text-white transition-colors duration-300">Projects</a></li>
+                <li><a href="#socials" class="nav-link hover:text-white transition-colors duration-300">Profiles</a></li>
+                <li><a href="#contact" class="nav-link hover:text-white transition-colors duration-300">Contact</a></li>
             </ul>
-            <div class="hamburger" id="hamburger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
+
+            <div class="hamburger md:hidden cursor-pointer flex flex-col justify-between w-6 h-4 z-50" id="hamburger">
+                <span class="line1 w-full h-[2px] bg-white transition-transform duration-300 origin-left"></span>
+                <span class="line2 w-full h-[2px] bg-white transition-opacity duration-300"></span>
+                <span class="line3 w-full h-[2px] bg-white transition-transform duration-300 origin-left"></span>
             </div>
         </div>
-        <!-- Nav progress line -->
-        <div class="nav-progress" id="navProgress"></div>
+        <!-- Scroll Progress Line -->
+        <div class="h-[1.5px] bg-gradient-to-r from-cinematic-gold via-cinematic-crimson to-cinematic-gold w-0 transition-all duration-100" id="navProgress"></div>
     </nav>
 
-    <main>
+    <main class="relative z-10 max-w-7xl mx-auto px-6">
+        
         <!-- Hero Section -->
-        <section id="hero" class="hero section-spacing">
-            <div class="hero-content">
-                <p class="greeting" id="heroGreeting"><span class="mono-bracket">&lt;</span>Hi, I'm<span class="mono-bracket">/&gt;</span></p>
-                <h1 class="name" id="heroName">Bose A M</h1>
-                <h2 class="title" id="heroTitle">Aspiring <span class="typed-text"></span><span class="cursor">&nbsp;</span></h2>
-                <p class="hero-description" id="heroDesc">
+        <section id="hero" class="min-h-screen flex flex-col md:flex-row items-center justify-between pt-32 pb-20 gap-12 relative">
+            <!-- Left Column: Cinematic Typography -->
+            <div class="flex-1 space-y-6 hero-content text-left">
+                <div class="inline-flex items-center space-x-2 text-xs font-mono tracking-[0.3em] uppercase text-cinematic-gold" id="heroGreeting">
+                    <span>&lt; SYSTEM REVEAL /&gt;</span>
+                </div>
+                
+                <h1 class="text-5xl lg:text-7xl font-display font-black tracking-tight text-white leading-tight opacity-0 name" id="heroName">
+                    Bose A M
+                </h1>
+                
+                <h2 class="text-xl lg:text-2xl font-mono text-neutral-400 font-medium opacity-0 title" id="heroTitle">
+                    Aspiring <span class="typed-text text-cinematic-gold font-bold"></span><span class="cursor text-cinematic-gold animate-pulse">&nbsp;</span>
+                </h2>
+                
+                <p class="text-neutral-400 max-w-xl text-base leading-relaxed opacity-0 hero-description" id="heroDesc">
                     Recent B.Sc Information Technology graduate with hands-on experience in Python, web development, and AI-based applications. Passionate about building modern web applications, solving technical problems, and learning new technologies.
                 </p>
-                <div class="hero-cta" id="heroCta">
-                    <a href="#projects" class="btn btn-primary magnetic-btn">
-                        <span>View Projects</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                
+                <div class="flex flex-wrap items-center gap-4 pt-4 opacity-0 hero-cta" id="heroCta">
+                    <a href="#projects" class="group relative px-6 py-3.5 bg-cinematic-gold text-obsidian font-bold text-xs uppercase tracking-widest rounded overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(226,168,80,0.4)] magnetic-btn">
+                        <span class="relative z-10 flex items-center gap-2">
+                            View Projects <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                        </span>
                     </a>
-                    <a href="#contact" class="btn btn-secondary magnetic-btn">
+                    
+                    <a href="#contact" class="px-6 py-3.5 border border-neutral-700 text-white font-bold text-xs uppercase tracking-widest rounded hover:bg-white/5 hover:border-cinematic-gold transition-all duration-300 magnetic-btn">
                         <span>Contact Me</span>
                     </a>
                 </div>
+                
                 <!-- Status Badge -->
-                <div class="status-badge" id="statusBadge">
-                    <span class="status-dot"></span>
+                <div class="inline-flex items-center space-x-2.5 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-xs font-mono text-emerald-400 opacity-0 status-badge" id="statusBadge">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
                     <span>Available for opportunities</span>
                 </div>
             </div>
-            <div class="hero-image-container" id="heroImage">
-                <div class="image-ring ring-1"></div>
-                <div class="image-ring ring-2"></div>
-                <div class="image-ring ring-3"></div>
-                <div class="image-wrapper">
-                    <img src="{% static 'portfolio_app/profile.jpg' %}" alt="Bose A M - Full Stack Developer" class="profile-photo" loading="eager">
-                    <div class="image-glow"></div>
+
+            <!-- Right Column: Draggable ID Badge "Play-Pull" Lanyard Card -->
+            <div class="flex-1 flex justify-center items-center relative min-h-[480px] w-full" id="heroImageContainer">
+                
+                <!-- Lanyard Hanger/Clip and Dynamic Elastic String SVG -->
+                <div class="absolute inset-x-0 top-0 bottom-0 pointer-events-none flex justify-center z-20">
+                    <svg class="w-full h-full absolute top-0 left-0" id="lanyardSvg">
+                        <!-- Lanyard anchor at top-center of container -->
+                        <circle cx="50%" cy="10" r="4" fill="#555" />
+                        <!-- Lanyard string dynamic path (updated by JS) -->
+                        <path id="lanyardPath" d="M 50% 10 Q 50% 100 50% 120" stroke="#a27838" stroke-width="2" fill="none" />
+                    </svg>
                 </div>
-                <!-- Floating skill icons around image -->
-                <div class="float-icon fi-python" data-depth="0.3"><i class="devicon-python-plain"></i></div>
-                <div class="float-icon fi-js" data-depth="0.5"><i class="devicon-javascript-plain"></i></div>
-                <div class="float-icon fi-django" data-depth="0.2"><i class="devicon-django-plain"></i></div>
-                <div class="float-icon fi-git" data-depth="0.4"><i class="devicon-git-plain"></i></div>
-                <div class="float-icon fi-html" data-depth="0.35"><i class="devicon-html5-plain"></i></div>
-                <div class="float-icon fi-css" data-depth="0.45"><i class="devicon-css3-plain"></i></div>
+
+                <!-- Interactive "Play-Pull" Hanging Lanyard Badge -->
+                <div class="relative w-[280px] bg-neutral-950/90 rounded-2xl border border-cinematic-gold/20 p-5 shadow-[0_15px_40px_rgba(0,0,0,0.8)] cursor-grab active:cursor-grabbing select-none overflow-hidden group hover:border-cinematic-gold/40 transition-colors duration-300" id="heroImage">
+                    
+                    <!-- Lanyard Attachment Slot Graphic -->
+                    <div class="w-12 h-3 bg-neutral-800 rounded-full mx-auto mb-4 border border-neutral-700 flex items-center justify-center relative">
+                        <div class="w-6 h-1.5 bg-obsidian rounded-full"></div>
+                    </div>
+
+                    <!-- Scanlines Overlay & Glow effects inside ID card -->
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,6px_100%] pointer-events-none"></div>
+                    
+                    <!-- Pulsing Badge Status -->
+                    <div class="flex items-center justify-between text-[8px] font-mono tracking-widest text-neutral-500 uppercase border-b border-neutral-800 pb-2 mb-3">
+                        <span>SYS ID: 27757-DF3</span>
+                        <span class="text-cinematic-gold animate-pulse">● CONNECTED</span>
+                    </div>
+
+                    <!-- Profile Photo Frame styled as Printed ID Card Pic -->
+                    <div class="relative w-full h-[220px] rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 group-hover:border-cinematic-gold/20 transition-colors duration-300">
+                        <img src="{% static 'portfolio_app/profile.jpg' %}" alt="Bose A M" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out" loading="eager">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        
+                        <!-- Mini Lanyard Label -->
+                        <div class="absolute bottom-2 left-2 bg-obsidian/90 border border-cinematic-gold/30 px-2 py-0.5 rounded text-[8px] font-mono text-cinematic-gold tracking-widest uppercase">
+                            AGENT AM
+                        </div>
+                    </div>
+
+                    <!-- Metadata details on Badge -->
+                    <div class="mt-4 space-y-1.5 text-left font-mono">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-neutral-500">NAME:</span>
+                            <span class="text-white font-bold">BOSE A M</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-neutral-500">ROLE:</span>
+                            <span class="text-neutral-300">FULL-STACK / AI</span>
+                        </div>
+                        <div class="flex justify-between text-[10px]">
+                            <span class="text-neutral-500">CLASS:</span>
+                            <span class="text-neutral-300">B.SC IT GRADUATE</span>
+                        </div>
+                    </div>
+
+                    <!-- Barcode graphic at bottom -->
+                    <div class="mt-4 pt-3 border-t border-neutral-800/80 flex flex-col items-center space-y-1">
+                        <div class="h-6 w-full flex items-center justify-between opacity-70">
+                            <!-- Draw detailed custom barcode -->
+                            <div class="w-[3px] h-full bg-white"></div>
+                            <div class="w-[1px] h-full bg-white"></div>
+                            <div class="w-[2px] h-full bg-white"></div>
+                            <div class="w-[4px] h-full bg-white"></div>
+                            <div class="w-[1px] h-full bg-white"></div>
+                            <div class="w-[3px] h-full bg-white"></div>
+                            <div class="w-[2px] h-full bg-white"></div>
+                            <div class="w-[1px] h-full bg-white"></div>
+                            <div class="w-[4px] h-full bg-white"></div>
+                            <div class="w-[2px] h-full bg-white"></div>
+                            <div class="w-[1px] h-full bg-white"></div>
+                            <div class="w-[3px] h-full bg-white"></div>
+                            <div class="w-[2px] h-full bg-white"></div>
+                        </div>
+                        <span class="text-[7px] font-mono text-neutral-500 tracking-[0.4em]">9803AM-COLLECTIVE</span>
+                    </div>
+
+                    <!-- Grab indicator that appears when hovering card -->
+                    <div class="absolute inset-0 bg-obsidian/90 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <i class="fa-solid fa-hand-rock text-cinematic-gold text-2xl animate-bounce"></i>
+                        <span class="text-[10px] font-mono text-white tracking-[0.2em] uppercase">PULL CARD / DRAG ME</span>
+                        <span class="text-[8px] font-mono text-cinematic-gold/70">GSAP PHYSICS INTERACTION</span>
+                    </div>
+                </div>
+
+                <!-- Floating Parallax skills icon container around card -->
+                <div class="absolute inset-0 pointer-events-none z-10">
+                    <div class="float-icon fi-python absolute top-12 left-8 text-3xl opacity-30 text-white" data-depth="0.3"><i class="devicon-python-plain"></i></div>
+                    <div class="float-icon fi-js absolute top-24 right-10 text-3xl opacity-30 text-white" data-depth="0.5"><i class="devicon-javascript-plain"></i></div>
+                    <div class="float-icon fi-django absolute bottom-16 left-6 text-3xl opacity-30 text-white" data-depth="0.25"><i class="devicon-django-plain"></i></div>
+                    <div class="float-icon fi-git absolute bottom-24 right-12 text-3xl opacity-30 text-white" data-depth="0.45"><i class="devicon-git-plain"></i></div>
+                    <div class="float-icon fi-html absolute top-1/2 left-16 text-2xl opacity-20 text-white" data-depth="0.35"><i class="devicon-html5-plain"></i></div>
+                    <div class="float-icon fi-css absolute top-1/3 right-20 text-2xl opacity-20 text-white" data-depth="0.4"><i class="devicon-css3-plain"></i></div>
+                </div>
+
             </div>
-            <div class="scroll-indicator" id="scrollIndicator">
-                <span class="mouse">
-                    <span class="wheel"></span>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-0 cursor-pointer" id="scrollIndicator">
+                <span class="w-5 h-9 rounded-full border border-neutral-500 flex justify-center p-1">
+                    <span class="w-1 h-2 bg-cinematic-gold rounded-full animate-bounce"></span>
                 </span>
-                <p>Scroll</p>
+                <span class="text-[9px] font-mono tracking-widest text-neutral-500 uppercase">Scroll Film</span>
             </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="about section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">01.</span>
-                About Me
-                <span class="line"></span>
+        <section id="about" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-12 section-title">
+                <span>01 // BIO RECORD</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="about-grid">
-                <div class="about-text gsap-reveal">
-                    <p>I am a motivated and detail-oriented IT graduate from Puducherry with a strong interest in full stack development, AI applications, and software technologies. I enjoy creating practical projects that combine modern web technologies with artificial intelligence solutions.</p>
-                    <br>
-                    <p>I completed a Python Full Stack Development course at Ocean Academy, where I strengthened my skills in frontend and backend development. I also completed a technical internship at Lenovo India Private Limited, gaining real-world exposure to troubleshooting, system diagnostics, and technical support.</p>
-                    <br>
-                    <p>I am currently looking for entry-level opportunities where I can contribute, improve my technical skills, and grow as a software developer.</p>
 
-                    <div class="highlights">
-                        <div class="highlight-item gsap-reveal-stagger">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                            <span>B.Sc IT Graduate</span>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Text block -->
+                <div class="lg:col-span-7 space-y-6 gsap-reveal text-left">
+                    <p class="text-lg text-neutral-300 font-medium leading-relaxed">
+                        I am a motivated and detail-oriented IT graduate from Puducherry with a strong interest in full stack development, AI applications, and software technologies. I enjoy creating practical projects that combine modern web technologies with artificial intelligence solutions.
+                    </p>
+                    
+                    <p class="text-neutral-400 leading-relaxed">
+                        I completed a Python Full Stack Development course at Ocean Academy, where I strengthened my skills in frontend and backend development. I also completed a technical internship at Lenovo India Private Limited, gaining real-world exposure to troubleshooting, system diagnostics, and technical support.
+                    </p>
+                    
+                    <p class="text-neutral-400 leading-relaxed">
+                        I am currently looking for entry-level opportunities where I can contribute, improve my technical skills, and grow as a software developer.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
+                        <div class="flex items-center space-x-3.5 p-4 rounded bg-neutral-950/60 border border-neutral-900 gsap-reveal-stagger">
+                            <i class="fa-solid fa-graduation-cap text-cinematic-gold text-lg"></i>
+                            <span class="text-xs font-mono tracking-wider uppercase text-neutral-300">B.Sc IT Graduate</span>
                         </div>
-                        <div class="highlight-item gsap-reveal-stagger">
-                            <i class="fa-solid fa-robot"></i>
-                            <span>AI Enthusiast</span>
+                        <div class="flex items-center space-x-3.5 p-4 rounded bg-neutral-950/60 border border-neutral-900 gsap-reveal-stagger">
+                            <i class="fa-solid fa-robot text-cinematic-gold text-lg"></i>
+                            <span class="text-xs font-mono tracking-wider uppercase text-neutral-300">AI Enthusiast</span>
                         </div>
-                        <div class="highlight-item gsap-reveal-stagger">
-                            <i class="fa-solid fa-code"></i>
-                            <span>Full Stack Learner</span>
+                        <div class="flex items-center space-x-3.5 p-4 rounded bg-neutral-950/60 border border-neutral-900 gsap-reveal-stagger">
+                            <i class="fa-solid fa-code text-cinematic-gold text-lg"></i>
+                            <span class="text-xs font-mono tracking-wider uppercase text-neutral-300">Full Stack Learner</span>
                         </div>
                     </div>
                 </div>
-                <!-- About decorative panel -->
-                <div class="about-visual gsap-reveal">
-                    <div class="code-card">
-                        <div class="code-card-header">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
-                            <span class="code-lang">bose.json</span>
+
+                <!-- Decorative Interactive JSON Card -->
+                <div class="lg:col-span-5 gsap-reveal">
+                    <div class="relative bg-neutral-950 rounded-xl border border-cinematic-gold/10 overflow-hidden shadow-2xl">
+                        <div class="bg-neutral-900/80 px-4 py-3 flex items-center justify-between border-b border-neutral-800">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cinematic-crimson/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-cinematic-gold/80"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                            </div>
+                            <span class="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">bose_metadata.json</span>
                         </div>
-                        <pre class="code-body"><code>{
-  <span class="ck">"name"</span>: <span class="cv">"Bose A M"</span>,
-  <span class="ck">"role"</span>: <span class="cv">"Full Stack Developer"</span>,
-  <span class="ck">"location"</span>: <span class="cv">"Puducherry, India"</span>,
-  <span class="ck">"education"</span>: <span class="cv">"B.Sc IT"</span>,
-  <span class="ck">"passion"</span>: [
-    <span class="cv">"Web Dev"</span>,
-    <span class="cv">"AI Apps"</span>,
-    <span class="cv">"Problem Solving"</span>
+                        
+                        <div class="p-5 font-mono text-xs text-neutral-400 overflow-x-auto text-left leading-relaxed">
+                            <pre><code>{
+  <span class="text-cinematic-gold">"name"</span>: <span class="text-emerald-400">"Bose A M"</span>,
+  <span class="text-cinematic-gold">"role"</span>: <span class="text-emerald-400">"Full Stack Developer"</span>,
+  <span class="text-cinematic-gold">"location"</span>: <span class="text-emerald-400">"Puducherry, India"</span>,
+  <span class="text-cinematic-gold">"education"</span>: <span class="text-emerald-400">"B.Sc IT"</span>,
+  <span class="text-cinematic-gold">"passion"</span>: [
+    <span class="text-emerald-400">"Web Dev"</span>,
+    <span class="text-emerald-400">"AI Apps"</span>,
+    <span class="text-emerald-400">"Problem Solving"</span>
   ],
-  <span class="ck">"status"</span>: <span class="cg">"Open to Work"</span>
+  <span class="text-cinematic-gold">"status"</span>: <span class="text-emerald-400">"Open to Work"</span>
 }</code></pre>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Skills Section -->
-        <section id="skills" class="skills section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">02.</span>
-                My Arsenal
-                <span class="line"></span>
+        <section id="skills" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-12 section-title">
+                <span>02 // SKILLS CLOUD</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
 
-            <!-- Skill Icon Parallax Cloud -->
-            <div class="skills-icon-cloud" id="skillsIconCloud">
-                <div class="skill-cloud-icon" data-depth="0.2" style="--x:10%;--y:15%"><i class="devicon-python-plain colored"></i><span>Python</span></div>
-                <div class="skill-cloud-icon" data-depth="0.4" style="--x:80%;--y:10%"><i class="devicon-javascript-plain colored"></i><span>JavaScript</span></div>
-                <div class="skill-cloud-icon" data-depth="0.3" style="--x:50%;--y:5%"><i class="devicon-html5-plain colored"></i><span>HTML5</span></div>
-                <div class="skill-cloud-icon" data-depth="0.5" style="--x:20%;--y:60%"><i class="devicon-css3-plain colored"></i><span>CSS3</span></div>
-                <div class="skill-cloud-icon" data-depth="0.25" style="--x:70%;--y:70%"><i class="devicon-bootstrap-plain colored"></i><span>Bootstrap</span></div>
-                <div class="skill-cloud-icon" data-depth="0.45" style="--x:90%;--y:40%"><i class="devicon-django-plain colored"></i><span>Django</span></div>
-                <div class="skill-cloud-icon" data-depth="0.35" style="--x:35%;--y:80%"><i class="devicon-mongodb-plain colored"></i><span>MongoDB</span></div>
-                <div class="skill-cloud-icon" data-depth="0.2" style="--x:60%;--y:85%"><i class="devicon-mysql-plain colored"></i><span>MySQL</span></div>
-                <div class="skill-cloud-icon" data-depth="0.5" style="--x:5%;--y:45%"><i class="devicon-git-plain colored"></i><span>Git</span></div>
-                <div class="skill-cloud-icon" data-depth="0.3" style="--x:45%;--y:40%"><i class="devicon-vscode-plain colored"></i><span>VS Code</span></div>
-                <div class="skill-cloud-icon" data-depth="0.4" style="--x:25%;--y:30%"><i class="devicon-github-original colored"></i><span>GitHub</span></div>
-                <div class="skill-cloud-icon" data-depth="0.15" style="--x:75%;--y:30%"><i class="fa-solid fa-brain" style="color:#a855f7"></i><span>AI Tools</span></div>
+            <!-- Floating Skill Icons Cloud Parallax -->
+            <div class="relative w-full h-48 bg-neutral-950/20 rounded-xl overflow-hidden border border-neutral-900 mb-16 hidden lg:block" id="skillsIconCloud">
+                <div class="absolute inset-0 bg-radial-gradient from-transparent to-obsidian pointer-events-none z-10"></div>
+                <!-- Drift Icons -->
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.2" style="--x:12%;--y:20%"><i class="devicon-python-plain text-cinematic-gold text-sm"></i>Python</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.4" style="--x:78%;--y:15%"><i class="devicon-javascript-plain text-cinematic-gold text-sm"></i>JavaScript</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.3" style="--x:45%;--y:10%"><i class="devicon-html5-plain text-cinematic-gold text-sm"></i>HTML5</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.5" style="--x:18%;--y:65%"><i class="devicon-css3-plain text-cinematic-gold text-sm"></i>CSS3</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.25" style="--x:68%;--y:70%"><i class="devicon-bootstrap-plain text-cinematic-gold text-sm"></i>Bootstrap</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.45" style="--x:88%;--y:55%"><i class="devicon-django-plain text-cinematic-gold text-sm"></i>Django</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.35" style="--x:32%;--y:75%"><i class="devicon-mongodb-plain text-cinematic-gold text-sm"></i>MongoDB</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.2" style="--x:55%;--y:80%"><i class="devicon-mysql-plain text-cinematic-gold text-sm"></i>MySQL</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.5" style="--x:4%;--y:45%"><i class="devicon-git-plain text-cinematic-gold text-sm"></i>Git</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.3" style="--x:42%;--y:48%"><i class="devicon-vscode-plain text-cinematic-gold text-sm"></i>VS Code</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.4" style="--x:22%;--y:35%"><i class="devicon-github-original text-cinematic-gold text-sm"></i>GitHub</div>
+                <div class="skill-cloud-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300" data-depth="0.15" style="--x:72%;--y:40%"><i class="fa-solid fa-brain text-cinematic-gold text-xs"></i>AI Tools</div>
             </div>
 
-            <div class="skills-container">
-                <!-- Programming & Web Tech -->
-                <div class="skill-category gsap-card" id="skillDev">
-                    <div class="skill-card-glow"></div>
-                    <h3><i class="fa-solid fa-laptop-code"></i>Development</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag" data-icon="devicon-python-plain">
-                            <i class="devicon-python-plain"></i>Python
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-javascript-plain">
-                            <i class="devicon-javascript-plain"></i>JavaScript
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-html5-plain">
-                            <i class="devicon-html5-plain"></i>HTML5
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-css3-plain">
-                            <i class="devicon-css3-plain"></i>CSS3
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-bootstrap-plain">
-                            <i class="devicon-bootstrap-plain"></i>Bootstrap
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-django-plain">
-                            <i class="devicon-django-plain"></i>Django (Basics)
-                        </span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Development Tech Card -->
+                <div class="relative bg-neutral-950 p-6 rounded-xl border border-cinematic-gold/10 overflow-hidden group skill-category gsap-card" id="skillDev">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none skill-card-glow bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(226,168,80,0.06)_0%,transparent_50%)]"></div>
+                    <h3 class="flex items-center gap-3 text-white font-display font-bold text-lg mb-6 border-b border-neutral-900 pb-3">
+                        <i class="fa-solid fa-laptop-code text-cinematic-gold"></i> Development
+                    </h3>
+                    <div class="flex flex-wrap gap-2 skill-tags">
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-python-plain"><i class="devicon-python-plain text-cinematic-gold"></i> Python</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-javascript-plain"><i class="devicon-javascript-plain text-cinematic-gold"></i> JavaScript</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-html5-plain"><i class="devicon-html5-plain text-cinematic-gold"></i> HTML5</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-css3-plain"><i class="devicon-css3-plain text-cinematic-gold"></i> CSS3</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-bootstrap-plain"><i class="devicon-bootstrap-plain text-cinematic-gold"></i> Bootstrap</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-django-plain"><i class="devicon-django-plain text-cinematic-gold"></i> Django (Basics)</span>
                     </div>
                 </div>
-                <!-- Database -->
-                <div class="skill-category gsap-card" id="skillDb">
-                    <div class="skill-card-glow"></div>
-                    <h3><i class="fa-solid fa-database"></i>Database</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag" data-icon="devicon-mongodb-plain">
-                            <i class="devicon-mongodb-plain"></i>MongoDB
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-mysql-plain">
-                            <i class="devicon-mysql-plain"></i>MySQL
-                        </span>
+
+                <!-- Database Card -->
+                <div class="relative bg-neutral-950 p-6 rounded-xl border border-cinematic-gold/10 overflow-hidden group skill-category gsap-card" id="skillDb">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none skill-card-glow bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(226,168,80,0.06)_0%,transparent_50%)]"></div>
+                    <h3 class="flex items-center gap-3 text-white font-display font-bold text-lg mb-6 border-b border-neutral-900 pb-3">
+                        <i class="fa-solid fa-database text-cinematic-gold"></i> Database
+                    </h3>
+                    <div class="flex flex-wrap gap-2 skill-tags">
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-mongodb-plain"><i class="devicon-mongodb-plain text-cinematic-gold"></i> MongoDB</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-mysql-plain"><i class="devicon-mysql-plain text-cinematic-gold"></i> MySQL</span>
                     </div>
                 </div>
-                <!-- Tools & AI -->
-                <div class="skill-category gsap-card" id="skillTools">
-                    <div class="skill-card-glow"></div>
-                    <h3><i class="fa-solid fa-screwdriver-wrench"></i>Tools &amp; AI</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag" data-icon="devicon-git-plain">
-                            <i class="devicon-git-plain"></i>Git &amp; GitHub
-                        </span>
-                        <span class="skill-tag" data-icon="devicon-vscode-plain">
-                            <i class="devicon-vscode-plain"></i>VS Code
-                        </span>
-                        <span class="skill-tag glow ai-tag">
-                            <i class="fa-solid fa-robot"></i>ChatGPT
-                        </span>
-                        <span class="skill-tag glow ai-tag">
-                            <i class="fa-solid fa-microchip"></i>Claude
-                        </span>
-                        <span class="skill-tag glow ai-tag">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>Copilot
-                        </span>
-                        <span class="skill-tag glow ai-tag">
-                            <i class="fa-solid fa-rocket"></i>Antigravity
-                        </span>
+
+                <!-- Tools & AI Card -->
+                <div class="relative bg-neutral-950 p-6 rounded-xl border border-cinematic-gold/10 overflow-hidden group skill-category gsap-card" id="skillTools">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none skill-card-glow bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(226,168,80,0.06)_0%,transparent_50%)]"></div>
+                    <h3 class="flex items-center gap-3 text-white font-display font-bold text-lg mb-6 border-b border-neutral-900 pb-3">
+                        <i class="fa-solid fa-screwdriver-wrench text-cinematic-gold"></i> Tools &amp; AI
+                    </h3>
+                    <div class="flex flex-wrap gap-2 skill-tags">
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-git-plain"><i class="devicon-git-plain text-cinematic-gold"></i> Git &amp; GitHub</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-neutral-800 flex items-center gap-1.5 hover:border-cinematic-gold/40 transition-colors duration-300 skill-tag" data-icon="devicon-vscode-plain"><i class="devicon-vscode-plain text-cinematic-gold"></i> VS Code</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-cinematic-gold/20 flex items-center gap-1.5 hover:border-cinematic-gold/60 transition-colors duration-300 skill-tag glow ai-tag text-cinematic-gold shadow-[0_0_10px_rgba(226,168,80,0.1)]"><i class="fa-solid fa-robot"></i> ChatGPT</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-cinematic-gold/20 flex items-center gap-1.5 hover:border-cinematic-gold/60 transition-colors duration-300 skill-tag glow ai-tag text-cinematic-gold shadow-[0_0_10px_rgba(226,168,80,0.1)]"><i class="fa-solid fa-microchip"></i> Claude</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-cinematic-gold/20 flex items-center gap-1.5 hover:border-cinematic-gold/60 transition-colors duration-300 skill-tag glow ai-tag text-cinematic-gold shadow-[0_0_10px_rgba(226,168,80,0.1)]"><i class="fa-solid fa-wand-magic-sparkles"></i> Copilot</span>
+                        <span class="px-3 py-1.5 text-xs font-mono bg-neutral-900 rounded border border-cinematic-gold/20 flex items-center gap-1.5 hover:border-cinematic-gold/60 transition-colors duration-300 skill-tag glow ai-tag text-cinematic-gold shadow-[0_0_10px_rgba(226,168,80,0.1)]"><i class="fa-solid fa-rocket"></i> Antigravity</span>
                     </div>
                 </div>
-                <!-- Core Skills -->
-                <div class="skill-category gsap-card" id="skillCore">
-                    <div class="skill-card-glow"></div>
-                    <h3><i class="fa-solid fa-brain"></i>Core Skills</h3>
-                    <ul class="core-skills-list">
-                        <li><i class="fa-solid fa-check text-primary"></i>Problem Solving</li>
-                        <li><i class="fa-solid fa-check text-primary"></i>Debugging Basics</li>
-                        <li><i class="fa-solid fa-check text-primary"></i>API Integration</li>
-                        <li><i class="fa-solid fa-check text-primary"></i>Responsive Web Design</li>
-                        <li><i class="fa-solid fa-check text-primary"></i>Technical Troubleshooting</li>
+
+                <!-- Core Skills Card -->
+                <div class="relative bg-neutral-950 p-6 rounded-xl border border-cinematic-gold/10 overflow-hidden group skill-category gsap-card" id="skillCore">
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none skill-card-glow bg-[radial-gradient(circle_at_var(--mouse-x,50%)_var(--mouse-y,50%),rgba(226,168,80,0.06)_0%,transparent_50%)]"></div>
+                    <h3 class="flex items-center gap-3 text-white font-display font-bold text-lg mb-6 border-b border-neutral-900 pb-3">
+                        <i class="fa-solid fa-brain text-cinematic-gold"></i> Core Skills
+                    </h3>
+                    <ul class="space-y-3.5 core-skills-list font-mono text-xs text-neutral-400 text-left">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cinematic-gold text-[10px]"></i> Problem Solving</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cinematic-gold text-[10px]"></i> Debugging Basics</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cinematic-gold text-[10px]"></i> API Integration</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cinematic-gold text-[10px]"></i> Responsive Web Design</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cinematic-gold text-[10px]"></i> Technical Troubleshooting</li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <!-- Experience Section -->
-        <section id="experience" class="timeline-section section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">03.</span>
-                Professional Experience
-                <span class="line"></span>
+        <section id="experience" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-16 section-title">
+                <span>03 // EXPERIENCE CHRONICLE</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="timeline">
 
-                <div class="timeline-item left gsap-timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> Nov 2025 – April 2026</span>
-                        <h3>Python Full Stack Development</h3>
-                        <h4><i class="fa-solid fa-building"></i> Ocean Academy</h4>
-                        <p>Completed intensive training strengthening skills in frontend and backend development methodologies.</p>
+            <!-- Film Strip Layout for Timeline -->
+            <div class="relative border-l-2 border-neutral-900 pl-8 ml-4 space-y-12 max-w-3xl timeline">
+                <!-- Timeline item -->
+                <div class="relative timeline-item left gsap-timeline-item">
+                    <!-- Film Sprocket node -->
+                    <div class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-md bg-neutral-950 border-2 border-cinematic-gold/30 flex items-center justify-center timeline-dot">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cinematic-gold"></div>
+                    </div>
+                    
+                    <div class="space-y-2 timeline-content text-left">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-mono text-cinematic-gold tracking-widest uppercase">
+                            <i class="fa-regular fa-calendar text-[10px]"></i> Nov 2025 – April 2026
+                        </span>
+                        <h3 class="text-xl font-display font-bold text-white">Python Full Stack Development</h3>
+                        <h4 class="text-sm font-mono text-neutral-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-building text-neutral-600"></i> Ocean Academy
+                        </h4>
+                        <p class="text-sm text-neutral-400 leading-relaxed max-w-xl">
+                            Completed intensive training strengthening skills in frontend and backend development methodologies.
+                        </p>
                     </div>
                 </div>
 
-                <div class="timeline-item right gsap-timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> June 2024 – July 2024</span>
-                        <h3>Technical Intern</h3>
-                        <h4><i class="fa-solid fa-building"></i> Lenovo India Private Limited</h4>
-                        <ul>
-                            <li>Assisted in hardware troubleshooting and system diagnostics.</li>
-                            <li>Conducted quality testing for systems and devices.</li>
-                            <li>Prepared technical reports and documentation.</li>
-                            <li>Supported technical teams in resolving system-related issues.</li>
+                <!-- Timeline item -->
+                <div class="relative timeline-item right gsap-timeline-item">
+                    <!-- Film Sprocket node -->
+                    <div class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-md bg-neutral-950 border-2 border-cinematic-gold/30 flex items-center justify-center timeline-dot">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cinematic-gold"></div>
+                    </div>
+                    
+                    <div class="space-y-3 timeline-content text-left">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-mono text-cinematic-gold tracking-widest uppercase">
+                            <i class="fa-regular fa-calendar text-[10px]"></i> June 2024 – July 2024
+                        </span>
+                        <h3 class="text-xl font-display font-bold text-white">Technical Intern</h3>
+                        <h4 class="text-sm font-mono text-neutral-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-building text-neutral-600"></i> Lenovo India Private Limited
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-neutral-400 list-none font-mono">
+                            <li class="flex items-start gap-2"><span class="text-cinematic-gold select-none">→</span> Assisted in hardware troubleshooting and system diagnostics.</li>
+                            <li class="flex items-start gap-2"><span class="text-cinematic-gold select-none">→</span> Conducted quality testing for systems and devices.</li>
+                            <li class="flex items-start gap-2"><span class="text-cinematic-gold select-none">→</span> Prepared technical reports and documentation.</li>
+                            <li class="flex items-start gap-2"><span class="text-cinematic-gold select-none">→</span> Supported technical teams in resolving system-related issues.</li>
                         </ul>
                     </div>
                 </div>
-
             </div>
         </section>
 
         <!-- Education Section -->
-        <section id="education" class="timeline-section section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">04.</span>
-                Education
-                <span class="line"></span>
+        <section id="education" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-16 section-title">
+                <span>04 // EDUCATION TRACKS</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="timeline">
 
-                <div class="timeline-item left gsap-timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2022 – 2025</span>
-                        <h3>B.Sc Information Technology</h3>
-                        <h4><i class="fa-solid fa-university"></i> Saradha Gangadharan College</h4>
+            <div class="relative border-l-2 border-neutral-900 pl-8 ml-4 space-y-12 max-w-3xl timeline">
+                <!-- SGC -->
+                <div class="relative timeline-item left gsap-timeline-item">
+                    <div class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-md bg-neutral-950 border-2 border-cinematic-gold/30 flex items-center justify-center timeline-dot">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cinematic-gold"></div>
+                    </div>
+                    <div class="space-y-1 timeline-content text-left">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-mono text-cinematic-gold tracking-widest uppercase">
+                            <i class="fa-regular fa-calendar text-[10px]"></i> 2022 – 2025
+                        </span>
+                        <h3 class="text-xl font-display font-bold text-white">B.Sc Information Technology</h3>
+                        <h4 class="text-sm font-mono text-neutral-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-university text-neutral-600"></i> Saradha Gangadharan College
+                        </h4>
                     </div>
                 </div>
 
-                <div class="timeline-item right gsap-timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2020 – 2022</span>
-                        <h3>HSC</h3>
-                        <h4><i class="fa-solid fa-school"></i> Thavalakuppam Govt School</h4>
+                <!-- HSC -->
+                <div class="relative timeline-item right gsap-timeline-item">
+                    <div class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-md bg-neutral-950 border-2 border-cinematic-gold/30 flex items-center justify-center timeline-dot">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cinematic-gold"></div>
+                    </div>
+                    <div class="space-y-1 timeline-content text-left">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-mono text-cinematic-gold tracking-widest uppercase">
+                            <i class="fa-regular fa-calendar text-[10px]"></i> 2020 – 2022
+                        </span>
+                        <h3 class="text-xl font-display font-bold text-white">HSC</h3>
+                        <h4 class="text-sm font-mono text-neutral-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-school text-neutral-600"></i> Thavalakuppam Govt School
+                        </h4>
                     </div>
                 </div>
 
-                <div class="timeline-item left gsap-timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2019 – 2020</span>
-                        <h3>SSLC</h3>
-                        <h4><i class="fa-solid fa-school"></i> Vidhya Bhavan Hr. Sec. School</h4>
+                <!-- SSLC -->
+                <div class="relative timeline-item left gsap-timeline-item">
+                    <div class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-md bg-neutral-950 border-2 border-cinematic-gold/30 flex items-center justify-center timeline-dot">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cinematic-gold"></div>
+                    </div>
+                    <div class="space-y-1 timeline-content text-left">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-mono text-cinematic-gold tracking-widest uppercase">
+                            <i class="fa-regular fa-calendar text-[10px]"></i> 2019 – 2020
+                        </span>
+                        <h3 class="text-xl font-display font-bold text-white">SSLC</h3>
+                        <h4 class="text-sm font-mono text-neutral-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-school text-neutral-600"></i> Vidhya Bhavan Hr. Sec. School
+                        </h4>
                     </div>
                 </div>
-
             </div>
         </section>
 
         <!-- Projects Section -->
-        <section id="projects" class="projects section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">05.</span>
-                Featured Projects
-                <span class="line"></span>
+        <section id="projects" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-16 section-title">
+                <span>05 // FEATURED PRODUCTIONS</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="projects-grid">
 
+            <!-- Widescreen Cinematic Posters -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 projects-grid">
+                
                 <!-- Nexus Project -->
-                <div class="project-card gsap-card" id="projectNexus">
-                    <div class="project-card-inner">
-                        <div class="project-image nexus-bg">
-                            <div class="project-overlay">
-                                <div class="project-links">
-                                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="GitHub">
-                                        <i class="fa-brands fa-github"></i>
-                                    </a>
-                                    <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="Live Demo">
-                                        <i class="fa-solid fa-external-link-alt"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="project-number">01</div>
+                <div class="relative bg-neutral-950 rounded-xl overflow-hidden border border-cinematic-gold/10 group project-card shadow-2xl transition-all duration-500 ease-out" id="projectNexus">
+                    <!-- Project Image Backdrop -->
+                    <div class="relative w-full h-[280px] overflow-hidden nexus-bg bg-cover bg-center">
+                        <div class="absolute inset-0 bg-neutral-950/80 group-hover:bg-neutral-950/40 transition-colors duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
+                        
+                        <!-- Overlay Project Links -->
+                        <div class="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 project-overlay">
+                            <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-cinematic-gold text-obsidian flex items-center justify-center hover:scale-110 transition-transform duration-300 icon-link magnetic-btn" title="GitHub">
+                                <i class="fa-brands fa-github text-lg"></i>
+                            </a>
+                            <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-cinematic-gold text-obsidian flex items-center justify-center hover:scale-110 transition-transform duration-300 icon-link magnetic-btn" title="Live Demo">
+                                <i class="fa-solid fa-external-link-alt text-base"></i>
+                            </a>
                         </div>
-                        <div class="project-info">
-                            <h3>Nexus – AI Voice Assistant</h3>
-                            <p class="project-desc">A full-stack AI voice assistant web app integrated with Groq AI API. Features real-time interaction, voice comms, user auth, and local storage support.</p>
-                            <div class="project-tech">
-                                <span>Python</span><span>Flask</span><span>Groq API</span><span>HTML/CSS/JS</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="readme-btn magnetic-btn" data-project="nexus">
-                                    <i class="fa-solid fa-book-open"></i> View Readme
-                                </button>
-                                <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn magnetic-btn">
-                                    <i class="fa-solid fa-circle-play"></i> Live Demo
-                                </a>
-                            </div>
+                        
+                        <!-- Large Film Index -->
+                        <div class="absolute top-4 left-6 text-xs font-mono text-cinematic-gold tracking-[0.2em] uppercase border-b border-cinematic-gold/30 pb-1">
+                            PROD // 01
+                        </div>
+                    </div>
+
+                    <!-- Details Area -->
+                    <div class="p-6 space-y-4 project-info text-left">
+                        <h3 class="text-2xl font-display font-black text-white group-hover:text-cinematic-gold transition-colors">
+                            Nexus – AI Voice Assistant
+                        </h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed project-desc">
+                            A full-stack AI voice assistant web app integrated with Groq AI API. Features real-time interaction, voice comms, user auth, and local storage support.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-2 text-[10px] font-mono text-cinematic-gold uppercase project-tech">
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">Python</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">Flask</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">Groq API</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">HTML/CSS/JS</span>
+                        </div>
+
+                        <div class="pt-4 border-t border-neutral-900 flex justify-between items-center gap-4 project-actions">
+                            <button class="flex items-center gap-2 px-4 py-2 border border-neutral-800 hover:border-cinematic-gold rounded text-xs font-mono uppercase text-neutral-300 hover:text-white transition-colors duration-300 readme-btn magnetic-btn" data-project="nexus">
+                                <i class="fa-solid fa-book-open text-[10px]"></i> View Readme
+                            </button>
+                            <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2 bg-cinematic-gold hover:bg-cinematic-gold/80 text-obsidian rounded text-xs font-mono font-bold uppercase transition-colors duration-300 live-demo-btn magnetic-btn">
+                                <i class="fa-solid fa-circle-play text-[10px]"></i> Live Demo
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Gaming Website Project -->
-                <div class="project-card gsap-card" id="projectGaming">
-                    <div class="project-card-inner">
-                        <div class="project-image gaming-bg">
-                            <div class="project-overlay">
-                                <div class="project-links">
-                                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="GitHub">
-                                        <i class="fa-brands fa-github"></i>
-                                    </a>
-                                    <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="Live Demo">
-                                        <i class="fa-solid fa-external-link-alt"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="project-number">02</div>
+                <div class="relative bg-neutral-950 rounded-xl overflow-hidden border border-cinematic-gold/10 group project-card shadow-2xl transition-all duration-500 ease-out" id="projectGaming">
+                    <!-- Project Image Backdrop -->
+                    <div class="relative w-full h-[280px] overflow-hidden gaming-bg bg-cover bg-center">
+                        <div class="absolute inset-0 bg-neutral-950/80 group-hover:bg-neutral-950/40 transition-colors duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
+                        
+                        <!-- Overlay Project Links -->
+                        <div class="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 project-overlay">
+                            <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-cinematic-gold text-obsidian flex items-center justify-center hover:scale-110 transition-transform duration-300 icon-link magnetic-btn" title="GitHub">
+                                <i class="fa-brands fa-github text-lg"></i>
+                            </a>
+                            <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-cinematic-gold text-obsidian flex items-center justify-center hover:scale-110 transition-transform duration-300 icon-link magnetic-btn" title="Live Demo">
+                                <i class="fa-solid fa-external-link-alt text-base"></i>
+                            </a>
                         </div>
-                        <div class="project-info">
-                            <h3>Gaming Website</h3>
-                            <p class="project-desc">Developed a gaming website inspired by modern gaming platforms with responsive design and interactive user interface.</p>
-                            <div class="project-tech">
-                                <span>HTML</span><span>CSS</span><span>Bootstrap</span><span>JavaScript</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="readme-btn magnetic-btn" data-project="gaming">
-                                    <i class="fa-solid fa-book-open"></i> View Readme
-                                </button>
-                                <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn magnetic-btn">
-                                    <i class="fa-solid fa-circle-play"></i> Live Demo
-                                </a>
-                            </div>
+                        
+                        <!-- Large Film Index -->
+                        <div class="absolute top-4 left-6 text-xs font-mono text-cinematic-gold tracking-[0.2em] uppercase border-b border-cinematic-gold/30 pb-1">
+                            PROD // 02
+                        </div>
+                    </div>
+
+                    <!-- Details Area -->
+                    <div class="p-6 space-y-4 project-info text-left">
+                        <h3 class="text-2xl font-display font-black text-white group-hover:text-cinematic-gold transition-colors">
+                            Gaming Website
+                        </h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed project-desc">
+                            Developed a gaming website inspired by modern gaming platforms with responsive design and interactive user interface.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-2 text-[10px] font-mono text-cinematic-gold uppercase project-tech">
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">HTML</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">CSS</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">Bootstrap</span>
+                            <span class="bg-neutral-900 px-2 py-1 rounded border border-neutral-800">JavaScript</span>
+                        </div>
+
+                        <div class="pt-4 border-t border-neutral-900 flex justify-between items-center gap-4 project-actions">
+                            <button class="flex items-center gap-2 px-4 py-2 border border-neutral-800 hover:border-cinematic-gold rounded text-xs font-mono uppercase text-neutral-300 hover:text-white transition-colors duration-300 readme-btn magnetic-btn" data-project="gaming">
+                                <i class="fa-solid fa-book-open text-[10px]"></i> View Readme
+                            </button>
+                            <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2 bg-cinematic-gold hover:bg-cinematic-gold/80 text-obsidian rounded text-xs font-mono font-bold uppercase transition-colors duration-300 live-demo-btn magnetic-btn">
+                                <i class="fa-solid fa-circle-play text-[10px]"></i> Live Demo
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -421,99 +635,127 @@
         </section>
 
         <!-- Profiles Section -->
-        <section id="socials" class="socials-section section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">06.</span>
-                Profiles &amp; Connections
-                <span class="line"></span>
+        <section id="socials" class="py-24 border-t border-white/[0.03] relative">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-16 section-title">
+                <span>06 // ACCESS GATEWAYS</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="socials-grid">
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- GitHub Card -->
-                <div class="social-card gsap-card" id="socialGithub">
-                    <div class="social-card-bg"></div>
-                    <div class="social-icon github-icon">
-                        <i class="fa-brands fa-github"></i>
+                <div class="relative bg-neutral-950 p-8 rounded-xl border border-cinematic-gold/10 group overflow-hidden shadow-2xl social-card" id="socialGithub">
+                    <div class="absolute -right-16 -top-16 w-32 h-32 rounded-full bg-neutral-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center border border-cinematic-gold/10"></div>
+                    <div class="space-y-4 text-left relative z-10">
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-2xl text-cinematic-gold github-icon">
+                            <i class="fa-brands fa-github"></i>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold text-white">GitHub</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed max-w-sm">
+                            Explore my repositories, view my open-source projects, and check out my coding activity and contributions.
+                        </p>
+                        <div class="pt-4">
+                            <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-mono text-cinematic-gold hover:text-white uppercase tracking-widest btn social-btn github-btn magnetic-btn">
+                                Explore Code <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3>GitHub</h3>
-                    <p class="social-desc">Explore my repositories, view my open-source projects, and check out my coding activity and contributions.</p>
-                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="btn social-btn github-btn magnetic-btn">
-                        Explore Code <i class="fa-solid fa-arrow-right"></i>
-                    </a>
                 </div>
 
                 <!-- LinkedIn Card -->
-                <div class="social-card gsap-card" id="socialLinkedin">
-                    <div class="social-card-bg"></div>
-                    <div class="social-icon linkedin-icon">
-                        <i class="fa-brands fa-linkedin-in"></i>
+                <div class="relative bg-neutral-950 p-8 rounded-xl border border-cinematic-gold/10 group overflow-hidden shadow-2xl social-card" id="socialLinkedin">
+                    <div class="absolute -right-16 -top-16 w-32 h-32 rounded-full bg-neutral-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center border border-cinematic-gold/10"></div>
+                    <div class="space-y-4 text-left relative z-10">
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-2xl text-cinematic-gold linkedin-icon">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold text-white">LinkedIn</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed max-w-sm">
+                            Connect with me professionally, check my career updates, and let's discuss full-stack development opportunities.
+                        </p>
+                        <div class="pt-4">
+                            <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-mono text-cinematic-gold hover:text-white uppercase tracking-widest btn social-btn linkedin-btn magnetic-btn">
+                                Connect Professionally <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3>LinkedIn</h3>
-                    <p class="social-desc">Connect with me professionally, check my career updates, and let's discuss full-stack development opportunities.</p>
-                    <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="btn social-btn linkedin-btn magnetic-btn">
-                        Connect Professionally <i class="fa-solid fa-arrow-right"></i>
-                    </a>
                 </div>
-
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="contact section-spacing">
-            <h2 class="section-title">
-                <span class="title-number">07.</span>
-                Get In Touch
-                <span class="line"></span>
+        <section id="contact" class="py-24 border-t border-white/[0.03] relative mb-12">
+            <h2 class="text-xs font-mono tracking-[0.4em] uppercase text-cinematic-gold flex items-center gap-3 mb-16 section-title">
+                <span>07 // TELECOMMUNICATIONS</span>
+                <span class="h-[1px] bg-neutral-800 flex-1"></span>
             </h2>
-            <div class="contact-container gsap-reveal">
-                <p class="contact-text">I'm currently looking for entry-level opportunities as a Full Stack or Software Developer. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
 
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fa-solid fa-location-dot"></i>
+            <div class="max-w-2xl mx-auto bg-neutral-950 p-8 rounded-xl border border-cinematic-gold/10 text-center space-y-8 shadow-2xl gsap-reveal">
+                <p class="text-neutral-400 text-sm leading-relaxed max-w-lg mx-auto">
+                    I'm currently looking for entry-level opportunities as a Full Stack or Software Developer. Whether you have a question or just want to say hi, I'll try my best to get back to you!
+                </p>
+
+                <!-- Cinematic Details list -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-xs font-mono text-neutral-300 contact-info">
+                    <div class="flex items-center gap-2 contact-item">
+                        <i class="fa-solid fa-location-dot text-cinematic-gold"></i>
                         <span>Puducherry, India</span>
                     </div>
-                    <div class="contact-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <a href="mailto:boseam123@gmail.com">boseam123@gmail.com</a>
+                    <div class="flex items-center gap-2 contact-item">
+                        <i class="fa-solid fa-envelope text-cinematic-gold"></i>
+                        <a href="mailto:boseam123@gmail.com" class="hover:text-cinematic-gold transition-colors">boseam123@gmail.com</a>
                     </div>
-                    <div class="contact-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <a href="tel:+919003712986">+91 9003712986</a>
+                    <div class="flex items-center gap-2 contact-item">
+                        <i class="fa-solid fa-phone text-cinematic-gold"></i>
+                        <a href="tel:+919003712986" class="hover:text-cinematic-gold transition-colors">+91 9003712986</a>
                     </div>
                 </div>
 
-                <a href="mailto:boseam123@gmail.com" class="btn btn-primary contact-btn magnetic-btn">
-                    <span>Say Hello</span>
-                    <i class="fa-solid fa-paper-plane"></i>
-                </a>
+                <div class="pt-4">
+                    <a href="mailto:boseam123@gmail.com" class="inline-flex items-center gap-2 px-8 py-4 bg-cinematic-gold hover:bg-cinematic-gold/80 text-obsidian text-xs font-mono font-bold uppercase tracking-widest rounded transition-colors duration-300 contact-btn magnetic-btn">
+                        <span>Say Hello</span>
+                        <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                    </a>
+                </div>
             </div>
         </section>
+
     </main>
 
-    <footer>
-        <div class="footer-inner">
-            <div class="social-links">
-                <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="magnetic-btn"><i class="fa-brands fa-github"></i></a>
-                <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="magnetic-btn"><i class="fa-brands fa-linkedin-in"></i></a>
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.03] bg-neutral-950/60 py-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-4 social-links">
+                <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center hover:border-cinematic-gold hover:text-cinematic-gold transition-colors duration-300 magnetic-btn"><i class="fa-brands fa-github text-sm"></i></a>
+                <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center hover:border-cinematic-gold hover:text-cinematic-gold transition-colors duration-300 magnetic-btn"><i class="fa-brands fa-linkedin-in text-sm"></i></a>
             </div>
-            <p>Built with <span class="heart">♥</span> by Bose A M &copy; 2026</p>
+            
+            <p class="text-xs font-mono text-neutral-500">
+                Built with <span class="text-cinematic-crimson animate-pulse">♥</span> by Bose A M &copy; 2026
+            </p>
         </div>
     </footer>
 
     <!-- README Modal Popup -->
-    <div class="modal-overlay" id="readme-modal">
-        <div class="modal-container">
-            <button class="modal-close" id="modal-close-btn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-body" id="modal-body-content">
+    <div class="modal-overlay fixed inset-0 z-50 bg-black/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-400 flex items-center justify-center p-4" id="readme-modal">
+        <div class="relative w-full max-w-4xl bg-neutral-950 rounded-2xl border border-cinematic-gold/25 shadow-2xl flex flex-col max-h-[85vh] scale-95 transition-transform duration-400 overflow-hidden modal-container">
+            <!-- Modal header controls -->
+            <div class="px-6 py-4 border-b border-neutral-900 flex justify-between items-center bg-neutral-900/60">
+                <span class="text-xs font-mono text-cinematic-gold tracking-[0.2em] uppercase uppercase">Project Readme Catalog</span>
+                <button class="w-8 h-8 rounded-full border border-neutral-800 flex items-center justify-center hover:border-cinematic-crimson hover:text-cinematic-crimson transition-colors duration-300 modal-close" id="modal-close-btn" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <!-- Modal Body Content -->
+            <div class="p-6 md:p-8 overflow-y-auto text-left prose prose-invert prose-amber max-w-none modal-body" id="modal-body-content">
                 <!-- Content will be injected dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- GSAP CDN -->
+    <!-- GSAP Core & Plugins -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
     <!-- Lenis Smooth Scroll -->
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <!-- Custom Script -->
