@@ -378,25 +378,7 @@ setTimeout(type, 2800);
 /* ─────────────────────────────────────────
    10. PARALLAX FLOATING ICONS (Hero - Combined Cursor Loop)
 ───────────────────────────────────────── */
-const floatIcons = document.querySelectorAll('.float-icon');
-const cloudIcons = document.querySelectorAll('.skill-cloud-icon');
-
-window.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-
-    floatIcons.forEach(icon => {
-        const depth = parseFloat(icon.dataset.depth || 0.3);
-        gsap.to(icon, { x: dx * depth * 40, y: dy * depth * 40, duration: 0.8, ease: 'power2.out' });
-    });
-    
-    cloudIcons.forEach(icon => {
-        const depth = parseFloat(icon.dataset.depth || 0.3);
-        gsap.to(icon, { x: dx * depth * 30, y: dy * depth * 20, duration: 1.0, ease: 'power2.out' });
-    });
-});
+// Handled in combined 60fps animateLoop loop above to prevent conflicts and layout thrashing
 
 /* ─────────────────────────────────────────
    11. SKILLS ICON CLOUD ENTRANCE
@@ -655,20 +637,25 @@ document.querySelectorAll('.project-card').forEach(card => {
    17. SOCIAL CARD TILT ON HOVER
 ───────────────────────────────────────── */
 document.querySelectorAll('.social-card').forEach(card => {
+    let rect = null;
+    card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+    });
     card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
+        if (!rect) rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         gsap.to(card, {
             rotateY: x * 8,
             rotateX: -y * 5,
-            duration: 0.4,
+            duration: 0.3,
             ease: 'power2.out',
             transformPerspective: 1000,
         });
     });
 
     card.addEventListener('mouseleave', () => {
+        rect = null;
         gsap.to(card, {
             rotateY: 0,
             rotateX: 0,
