@@ -4,27 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bose A M - Full Stack Developer & AI Enthusiast</title>
+    <title>Bose A M - Full Stack Developer &amp; AI Enthusiast</title>
     <meta name="description" content="Portfolio of Bose A M, an aspiring Full Stack Developer and AI Enthusiast building modern web applications and AI tools.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Devicons for skill icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'portfolio_app/style.css' %}">
 </head>
 <body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-outline" id="cursorOutline"></div>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
     <!-- Background Elements -->
     <div class="bg-glow blob-1"></div>
     <div class="bg-glow blob-2"></div>
-    
+    <div class="bg-glow blob-3"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particlesContainer"></div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-content">
-            <a href="#hero" class="logo">Bose<span>.</span></a>
-            <ul class="nav-links">
+            <a href="#hero" class="logo" id="navLogo">Bose<span>.</span></a>
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#experience" class="nav-link">Experience</a></li>
@@ -33,67 +46,116 @@
                 <li><a href="#socials" class="nav-link">Profiles</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
-            <div class="hamburger">
+            <div class="hamburger" id="hamburger">
                 <div class="line1"></div>
                 <div class="line2"></div>
                 <div class="line3"></div>
             </div>
         </div>
+        <!-- Nav progress line -->
+        <div class="nav-progress" id="navProgress"></div>
     </nav>
 
     <main>
         <!-- Hero Section -->
         <section id="hero" class="hero section-spacing">
-            <div class="hero-content hidden-initial">
-                <p class="greeting">Hi, I'm</p>
-                <h1 class="name">Bose A M</h1>
-                <h2 class="title">Aspiring <span class="typed-text"></span><span class="cursor">&nbsp;</span></h2>
-                <p class="hero-description">
+            <div class="hero-content">
+                <p class="greeting" id="heroGreeting"><span class="mono-bracket">&lt;</span>Hi, I'm<span class="mono-bracket">/&gt;</span></p>
+                <h1 class="name" id="heroName">Bose A M</h1>
+                <h2 class="title" id="heroTitle">Aspiring <span class="typed-text"></span><span class="cursor">&nbsp;</span></h2>
+                <p class="hero-description" id="heroDesc">
                     Recent B.Sc Information Technology graduate with hands-on experience in Python, web development, and AI-based applications. Passionate about building modern web applications, solving technical problems, and learning new technologies.
                 </p>
-                <div class="hero-cta">
-                    <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="#contact" class="btn btn-secondary">Contact Me</a>
+                <div class="hero-cta" id="heroCta">
+                    <a href="#projects" class="btn btn-primary magnetic-btn">
+                        <span>View Projects</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#contact" class="btn btn-secondary magnetic-btn">
+                        <span>Contact Me</span>
+                    </a>
+                </div>
+                <!-- Status Badge -->
+                <div class="status-badge" id="statusBadge">
+                    <span class="status-dot"></span>
+                    <span>Available for opportunities</span>
                 </div>
             </div>
-            <div class="hero-image-container hidden-initial right">
+            <div class="hero-image-container" id="heroImage">
+                <div class="image-ring ring-1"></div>
+                <div class="image-ring ring-2"></div>
+                <div class="image-ring ring-3"></div>
                 <div class="image-wrapper">
-                    <!-- Profile Photo -->
                     <img src="{% static 'portfolio_app/profile.jpg' %}" alt="Bose A M - Full Stack Developer" class="profile-photo" loading="eager">
+                    <div class="image-glow"></div>
                 </div>
+                <!-- Floating skill icons around image -->
+                <div class="float-icon fi-python" data-depth="0.3"><i class="devicon-python-plain"></i></div>
+                <div class="float-icon fi-js" data-depth="0.5"><i class="devicon-javascript-plain"></i></div>
+                <div class="float-icon fi-django" data-depth="0.2"><i class="devicon-django-plain"></i></div>
+                <div class="float-icon fi-git" data-depth="0.4"><i class="devicon-git-plain"></i></div>
+                <div class="float-icon fi-html" data-depth="0.35"><i class="devicon-html5-plain"></i></div>
+                <div class="float-icon fi-css" data-depth="0.45"><i class="devicon-css3-plain"></i></div>
             </div>
-            <div class="scroll-indicator">
+            <div class="scroll-indicator" id="scrollIndicator">
                 <span class="mouse">
                     <span class="wheel"></span>
                 </span>
-                <p>Scroll Down</p>
+                <p>Scroll</p>
             </div>
         </section>
 
         <!-- About Section -->
         <section id="about" class="about section-spacing">
-            <h2 class="section-title hidden-scroll">About Me <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">01.</span>
+                About Me
+                <span class="line"></span>
+            </h2>
             <div class="about-grid">
-                <div class="about-text hidden-scroll left">
+                <div class="about-text gsap-reveal">
                     <p>I am a motivated and detail-oriented IT graduate from Puducherry with a strong interest in full stack development, AI applications, and software technologies. I enjoy creating practical projects that combine modern web technologies with artificial intelligence solutions.</p>
                     <br>
                     <p>I completed a Python Full Stack Development course at Ocean Academy, where I strengthened my skills in frontend and backend development. I also completed a technical internship at Lenovo India Private Limited, gaining real-world exposure to troubleshooting, system diagnostics, and technical support.</p>
                     <br>
                     <p>I am currently looking for entry-level opportunities where I can contribute, improve my technical skills, and grow as a software developer.</p>
-                    
+
                     <div class="highlights">
-                        <div class="highlight-item">
+                        <div class="highlight-item gsap-reveal-stagger">
                             <i class="fa-solid fa-graduation-cap"></i>
                             <span>B.Sc IT Graduate</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item gsap-reveal-stagger">
                             <i class="fa-solid fa-robot"></i>
                             <span>AI Enthusiast</span>
                         </div>
-                        <div class="highlight-item">
+                        <div class="highlight-item gsap-reveal-stagger">
                             <i class="fa-solid fa-code"></i>
                             <span>Full Stack Learner</span>
                         </div>
+                    </div>
+                </div>
+                <!-- About decorative panel -->
+                <div class="about-visual gsap-reveal">
+                    <div class="code-card">
+                        <div class="code-card-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="code-lang">bose.json</span>
+                        </div>
+                        <pre class="code-body"><code>{
+  <span class="ck">"name"</span>: <span class="cv">"Bose A M"</span>,
+  <span class="ck">"role"</span>: <span class="cv">"Full Stack Developer"</span>,
+  <span class="ck">"location"</span>: <span class="cv">"Puducherry, India"</span>,
+  <span class="ck">"education"</span>: <span class="cv">"B.Sc IT"</span>,
+  <span class="ck">"passion"</span>: [
+    <span class="cv">"Web Dev"</span>,
+    <span class="cv">"AI Apps"</span>,
+    <span class="cv">"Problem Solving"</span>
+  ],
+  <span class="ck">"status"</span>: <span class="cg">"Open to Work"</span>
+}</code></pre>
                     </div>
                 </div>
             </div>
@@ -101,49 +163,102 @@
 
         <!-- Skills Section -->
         <section id="skills" class="skills section-spacing">
-            <h2 class="section-title hidden-scroll">My Arsenal <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">02.</span>
+                My Arsenal
+                <span class="line"></span>
+            </h2>
+
+            <!-- Skill Icon Parallax Cloud -->
+            <div class="skills-icon-cloud" id="skillsIconCloud">
+                <div class="skill-cloud-icon" data-depth="0.2" style="--x:10%;--y:15%"><i class="devicon-python-plain colored"></i><span>Python</span></div>
+                <div class="skill-cloud-icon" data-depth="0.4" style="--x:80%;--y:10%"><i class="devicon-javascript-plain colored"></i><span>JavaScript</span></div>
+                <div class="skill-cloud-icon" data-depth="0.3" style="--x:50%;--y:5%"><i class="devicon-html5-plain colored"></i><span>HTML5</span></div>
+                <div class="skill-cloud-icon" data-depth="0.5" style="--x:20%;--y:60%"><i class="devicon-css3-plain colored"></i><span>CSS3</span></div>
+                <div class="skill-cloud-icon" data-depth="0.25" style="--x:70%;--y:70%"><i class="devicon-bootstrap-plain colored"></i><span>Bootstrap</span></div>
+                <div class="skill-cloud-icon" data-depth="0.45" style="--x:90%;--y:40%"><i class="devicon-django-plain colored"></i><span>Django</span></div>
+                <div class="skill-cloud-icon" data-depth="0.35" style="--x:35%;--y:80%"><i class="devicon-mongodb-plain colored"></i><span>MongoDB</span></div>
+                <div class="skill-cloud-icon" data-depth="0.2" style="--x:60%;--y:85%"><i class="devicon-mysql-plain colored"></i><span>MySQL</span></div>
+                <div class="skill-cloud-icon" data-depth="0.5" style="--x:5%;--y:45%"><i class="devicon-git-plain colored"></i><span>Git</span></div>
+                <div class="skill-cloud-icon" data-depth="0.3" style="--x:45%;--y:40%"><i class="devicon-vscode-plain colored"></i><span>VS Code</span></div>
+                <div class="skill-cloud-icon" data-depth="0.4" style="--x:25%;--y:30%"><i class="devicon-github-original colored"></i><span>GitHub</span></div>
+                <div class="skill-cloud-icon" data-depth="0.15" style="--x:75%;--y:30%"><i class="fa-solid fa-brain" style="color:#a855f7"></i><span>AI Tools</span></div>
+            </div>
+
             <div class="skills-container">
                 <!-- Programming & Web Tech -->
-                <div class="skill-category hidden-scroll stagger-1">
-                    <h3><i class="fa-solid fa-laptop-code"></i> Development</h3>
+                <div class="skill-category gsap-card" id="skillDev">
+                    <div class="skill-card-glow"></div>
+                    <h3><i class="fa-solid fa-laptop-code"></i>Development</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">HTML5</span>
-                        <span class="skill-tag">CSS3</span>
-                        <span class="skill-tag">Bootstrap</span>
-                        <span class="skill-tag">Django (Basics)</span>
+                        <span class="skill-tag" data-icon="devicon-python-plain">
+                            <i class="devicon-python-plain"></i>Python
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-javascript-plain">
+                            <i class="devicon-javascript-plain"></i>JavaScript
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-html5-plain">
+                            <i class="devicon-html5-plain"></i>HTML5
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-css3-plain">
+                            <i class="devicon-css3-plain"></i>CSS3
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-bootstrap-plain">
+                            <i class="devicon-bootstrap-plain"></i>Bootstrap
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-django-plain">
+                            <i class="devicon-django-plain"></i>Django (Basics)
+                        </span>
                     </div>
                 </div>
                 <!-- Database -->
-                <div class="skill-category hidden-scroll stagger-2">
-                    <h3><i class="fa-solid fa-database"></i> Database</h3>
+                <div class="skill-category gsap-card" id="skillDb">
+                    <div class="skill-card-glow"></div>
+                    <h3><i class="fa-solid fa-database"></i>Database</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">MongoDB</span>
-                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag" data-icon="devicon-mongodb-plain">
+                            <i class="devicon-mongodb-plain"></i>MongoDB
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-mysql-plain">
+                            <i class="devicon-mysql-plain"></i>MySQL
+                        </span>
                     </div>
                 </div>
                 <!-- Tools & AI -->
-                <div class="skill-category hidden-scroll stagger-3">
-                    <h3><i class="fa-solid fa-screwdriver-wrench"></i> Tools & AI</h3>
+                <div class="skill-category gsap-card" id="skillTools">
+                    <div class="skill-card-glow"></div>
+                    <h3><i class="fa-solid fa-screwdriver-wrench"></i>Tools &amp; AI</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">Git & GitHub</span>
-                        <span class="skill-tag">VS Code</span>
-                        <span class="skill-tag glow">ChatGPT</span>
-                        <span class="skill-tag glow">Claude</span>
-                        <span class="skill-tag glow">Copilot</span>
-                        <span class="skill-tag glow">Antigravity</span>
+                        <span class="skill-tag" data-icon="devicon-git-plain">
+                            <i class="devicon-git-plain"></i>Git &amp; GitHub
+                        </span>
+                        <span class="skill-tag" data-icon="devicon-vscode-plain">
+                            <i class="devicon-vscode-plain"></i>VS Code
+                        </span>
+                        <span class="skill-tag glow ai-tag">
+                            <i class="fa-solid fa-robot"></i>ChatGPT
+                        </span>
+                        <span class="skill-tag glow ai-tag">
+                            <i class="fa-solid fa-microchip"></i>Claude
+                        </span>
+                        <span class="skill-tag glow ai-tag">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>Copilot
+                        </span>
+                        <span class="skill-tag glow ai-tag">
+                            <i class="fa-solid fa-rocket"></i>Antigravity
+                        </span>
                     </div>
                 </div>
                 <!-- Core Skills -->
-                <div class="skill-category hidden-scroll stagger-4">
-                    <h3><i class="fa-solid fa-brain"></i> Core Skills</h3>
+                <div class="skill-category gsap-card" id="skillCore">
+                    <div class="skill-card-glow"></div>
+                    <h3><i class="fa-solid fa-brain"></i>Core Skills</h3>
                     <ul class="core-skills-list">
-                        <li><i class="fa-solid fa-check text-primary"></i> Problem Solving</li>
-                        <li><i class="fa-solid fa-check text-primary"></i> Debugging Basics</li>
-                        <li><i class="fa-solid fa-check text-primary"></i> API Integration</li>
-                        <li><i class="fa-solid fa-check text-primary"></i> Responsive Web Design</li>
-                        <li><i class="fa-solid fa-check text-primary"></i> Technical Troubleshooting</li>
+                        <li><i class="fa-solid fa-check text-primary"></i>Problem Solving</li>
+                        <li><i class="fa-solid fa-check text-primary"></i>Debugging Basics</li>
+                        <li><i class="fa-solid fa-check text-primary"></i>API Integration</li>
+                        <li><i class="fa-solid fa-check text-primary"></i>Responsive Web Design</li>
+                        <li><i class="fa-solid fa-check text-primary"></i>Technical Troubleshooting</li>
                     </ul>
                 </div>
             </div>
@@ -151,25 +266,29 @@
 
         <!-- Experience Section -->
         <section id="experience" class="timeline-section section-spacing">
-            <h2 class="section-title hidden-scroll">Professional Experience <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">03.</span>
+                Professional Experience
+                <span class="line"></span>
+            </h2>
             <div class="timeline">
-                
-                <div class="timeline-item hidden-scroll left">
+
+                <div class="timeline-item left gsap-timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <span class="timeline-date">Nov 2025 – April 2026</span>
+                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> Nov 2025 – April 2026</span>
                         <h3>Python Full Stack Development</h3>
-                        <h4>Ocean Academy</h4>
+                        <h4><i class="fa-solid fa-building"></i> Ocean Academy</h4>
                         <p>Completed intensive training strengthening skills in frontend and backend development methodologies.</p>
                     </div>
                 </div>
 
-                <div class="timeline-item hidden-scroll right">
+                <div class="timeline-item right gsap-timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <span class="timeline-date">June 2024 – July 2024</span>
+                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> June 2024 – July 2024</span>
                         <h3>Technical Intern</h3>
-                        <h4>Lenovo India Private Limited</h4>
+                        <h4><i class="fa-solid fa-building"></i> Lenovo India Private Limited</h4>
                         <ul>
                             <li>Assisted in hardware troubleshooting and system diagnostics.</li>
                             <li>Conducted quality testing for systems and devices.</li>
@@ -184,33 +303,37 @@
 
         <!-- Education Section -->
         <section id="education" class="timeline-section section-spacing">
-            <h2 class="section-title hidden-scroll">Education <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">04.</span>
+                Education
+                <span class="line"></span>
+            </h2>
             <div class="timeline">
-                
-                <div class="timeline-item hidden-scroll left">
+
+                <div class="timeline-item left gsap-timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <span class="timeline-date">2022 – 2025</span>
+                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2022 – 2025</span>
                         <h3>B.Sc Information Technology</h3>
-                        <h4>Saradha Gangadharan College</h4>
+                        <h4><i class="fa-solid fa-university"></i> Saradha Gangadharan College</h4>
                     </div>
                 </div>
 
-                <div class="timeline-item hidden-scroll right">
+                <div class="timeline-item right gsap-timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <span class="timeline-date">2020 – 2022</span>
+                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2020 – 2022</span>
                         <h3>HSC</h3>
-                        <h4>Thavalakuppam Govt School</h4>
+                        <h4><i class="fa-solid fa-school"></i> Thavalakuppam Govt School</h4>
                     </div>
                 </div>
 
-                <div class="timeline-item hidden-scroll left">
+                <div class="timeline-item left gsap-timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <span class="timeline-date">2019 – 2020</span>
+                        <span class="timeline-date"><i class="fa-regular fa-calendar"></i> 2019 – 2020</span>
                         <h3>SSLC</h3>
-                        <h4>Vidhya Bhavan Hr. Sec. School</h4>
+                        <h4><i class="fa-solid fa-school"></i> Vidhya Bhavan Hr. Sec. School</h4>
                     </div>
                 </div>
 
@@ -219,59 +342,77 @@
 
         <!-- Projects Section -->
         <section id="projects" class="projects section-spacing">
-            <h2 class="section-title hidden-scroll">Featured Projects <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">05.</span>
+                Featured Projects
+                <span class="line"></span>
+            </h2>
             <div class="projects-grid">
-                
+
                 <!-- Nexus Project -->
-                <div class="project-card hidden-scroll bottom">
-                    <div class="project-image nexus-bg">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                                <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link" title="Live Demo"><i class="fa-solid fa-external-link-alt"></i></a>
+                <div class="project-card gsap-card" id="projectNexus">
+                    <div class="project-card-inner">
+                        <div class="project-image nexus-bg">
+                            <div class="project-overlay">
+                                <div class="project-links">
+                                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="GitHub">
+                                        <i class="fa-brands fa-github"></i>
+                                    </a>
+                                    <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="Live Demo">
+                                        <i class="fa-solid fa-external-link-alt"></i>
+                                    </a>
+                                </div>
                             </div>
+                            <div class="project-number">01</div>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Nexus – AI Voice Assistant</h3>
-                        <p class="project-desc">A full-stack AI voice assistant web app integrated with Groq AI API. Features real-time interaction, voice comms, user auth, and local storage support.</p>
-                        <div class="project-tech">
-                            <span>Python</span><span>Flask</span><span>Groq API</span><span>HTML/CSS/JS</span>
-                        </div>
-                        <div class="project-actions">
-                            <button class="readme-btn" data-project="nexus">
-                                <i class="fa-solid fa-book-open"></i> View Readme
-                            </button>
-                            <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn">
-                                <i class="fa-solid fa-circle-play"></i> Live Demo
-                            </a>
+                        <div class="project-info">
+                            <h3>Nexus – AI Voice Assistant</h3>
+                            <p class="project-desc">A full-stack AI voice assistant web app integrated with Groq AI API. Features real-time interaction, voice comms, user auth, and local storage support.</p>
+                            <div class="project-tech">
+                                <span>Python</span><span>Flask</span><span>Groq API</span><span>HTML/CSS/JS</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="readme-btn magnetic-btn" data-project="nexus">
+                                    <i class="fa-solid fa-book-open"></i> View Readme
+                                </button>
+                                <a href="https://ai-new-project-cwz1.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn magnetic-btn">
+                                    <i class="fa-solid fa-circle-play"></i> Live Demo
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Gaming Website Project -->
-                <div class="project-card hidden-scroll bottom stagger-1">
-                    <div class="project-image gaming-bg">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                                <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link" title="Live Demo"><i class="fa-solid fa-external-link-alt"></i></a>
+                <div class="project-card gsap-card" id="projectGaming">
+                    <div class="project-card-inner">
+                        <div class="project-image gaming-bg">
+                            <div class="project-overlay">
+                                <div class="project-links">
+                                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="GitHub">
+                                        <i class="fa-brands fa-github"></i>
+                                    </a>
+                                    <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="icon-link magnetic-btn" title="Live Demo">
+                                        <i class="fa-solid fa-external-link-alt"></i>
+                                    </a>
+                                </div>
                             </div>
+                            <div class="project-number">02</div>
                         </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Gaming Website</h3>
-                        <p class="project-desc">Developed a gaming website inspired by modern gaming platforms with responsive design and interactive user interface.</p>
-                        <div class="project-tech">
-                            <span>HTML</span><span>CSS</span><span>Bootstrap</span><span>JavaScript</span>
-                        </div>
-                        <div class="project-actions">
-                            <button class="readme-btn" data-project="gaming">
-                                <i class="fa-solid fa-book-open"></i> View Readme
-                            </button>
-                            <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn">
-                                <i class="fa-solid fa-circle-play"></i> Live Demo
-                            </a>
+                        <div class="project-info">
+                            <h3>Gaming Website</h3>
+                            <p class="project-desc">Developed a gaming website inspired by modern gaming platforms with responsive design and interactive user interface.</p>
+                            <div class="project-tech">
+                                <span>HTML</span><span>CSS</span><span>Bootstrap</span><span>JavaScript</span>
+                            </div>
+                            <div class="project-actions">
+                                <button class="readme-btn magnetic-btn" data-project="gaming">
+                                    <i class="fa-solid fa-book-open"></i> View Readme
+                                </button>
+                                <a href="https://gaming-website-82h0.onrender.com" target="_blank" rel="noopener noreferrer" class="live-demo-btn magnetic-btn">
+                                    <i class="fa-solid fa-circle-play"></i> Live Demo
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -281,29 +422,35 @@
 
         <!-- Profiles Section -->
         <section id="socials" class="socials-section section-spacing">
-            <h2 class="section-title hidden-scroll">Profiles & Connections <span class="line"></span></h2>
+            <h2 class="section-title">
+                <span class="title-number">06.</span>
+                Profiles &amp; Connections
+                <span class="line"></span>
+            </h2>
             <div class="socials-grid">
-                
+
                 <!-- GitHub Card -->
-                <div class="social-card hidden-scroll left">
+                <div class="social-card gsap-card" id="socialGithub">
+                    <div class="social-card-bg"></div>
                     <div class="social-icon github-icon">
                         <i class="fa-brands fa-github"></i>
                     </div>
                     <h3>GitHub</h3>
                     <p class="social-desc">Explore my repositories, view my open-source projects, and check out my coding activity and contributions.</p>
-                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="btn social-btn github-btn">
+                    <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="btn social-btn github-btn magnetic-btn">
                         Explore Code <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
 
                 <!-- LinkedIn Card -->
-                <div class="social-card hidden-scroll right">
+                <div class="social-card gsap-card" id="socialLinkedin">
+                    <div class="social-card-bg"></div>
                     <div class="social-icon linkedin-icon">
                         <i class="fa-brands fa-linkedin-in"></i>
                     </div>
                     <h3>LinkedIn</h3>
                     <p class="social-desc">Connect with me professionally, check my career updates, and let's discuss full-stack development opportunities.</p>
-                    <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="btn social-btn linkedin-btn">
+                    <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="btn social-btn linkedin-btn magnetic-btn">
                         Connect Professionally <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -313,10 +460,14 @@
 
         <!-- Contact Section -->
         <section id="contact" class="contact section-spacing">
-            <h2 class="section-title hidden-scroll">Get In Touch <span class="line"></span></h2>
-            <div class="contact-container hidden-scroll">
+            <h2 class="section-title">
+                <span class="title-number">07.</span>
+                Get In Touch
+                <span class="line"></span>
+            </h2>
+            <div class="contact-container gsap-reveal">
                 <p class="contact-text">I'm currently looking for entry-level opportunities as a Full Stack or Software Developer. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
-                
+
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fa-solid fa-location-dot"></i>
@@ -332,17 +483,22 @@
                     </div>
                 </div>
 
-                <a href="mailto:boseam123@gmail.com" class="btn btn-primary contact-btn">Say Hello</a>
+                <a href="mailto:boseam123@gmail.com" class="btn btn-primary contact-btn magnetic-btn">
+                    <span>Say Hello</span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </a>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="social-links">
-            <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
-            <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+        <div class="footer-inner">
+            <div class="social-links">
+                <a href="https://github.com/bose123-dark" target="_blank" rel="noopener noreferrer" class="magnetic-btn"><i class="fa-brands fa-github"></i></a>
+                <a href="https://linkedin.com/in/boseam" target="_blank" rel="noopener noreferrer" class="magnetic-btn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <p>Built with <span class="heart">♥</span> by Bose A M &copy; 2026</p>
         </div>
-        <p>Built by Bose A M &copy; 2026</p>
     </footer>
 
     <!-- README Modal Popup -->
@@ -355,6 +511,12 @@
         </div>
     </div>
 
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <!-- Custom Script -->
     <script src="{% static 'portfolio_app/script.js' %}"></script>
 </body>
 </html>
