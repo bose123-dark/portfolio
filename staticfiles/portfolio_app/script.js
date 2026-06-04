@@ -29,40 +29,62 @@ gsap.ticker.lagSmoothing(0);
 /* ─────────────────────────────────────────
    2. GSAP PLUGIN REGISTRATION
 ───────────────────────────────────────── */
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Draggable);
 
 /* ─────────────────────────────────────────
-   3. CUSTOM CURSOR
+   3. CUSTOM CURSOR & FLOATING ELEMENTS (Optimized Ticker)
 ───────────────────────────────────────── */
 const cursorDot = document.getElementById('cursorDot');
 const cursorOutline = document.getElementById('cursorOutline');
+const floatIcons = document.querySelectorAll('.float-icon');
+const cloudIcons = document.querySelectorAll('.skill-cloud-icon');
+
+let targetX = 0, targetY = 0;
+let normX = 0, normY = 0;
+
+window.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    normX = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+    normY = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+});
 
 if (cursorDot && cursorOutline) {
-    let dotX = 0, dotY = 0;
     let outX = 0, outY = 0;
 
-    window.addEventListener('mousemove', (e) => {
-        dotX = e.clientX;
-        dotY = e.clientY;
-    });
+    // Combined loop running at 60fps to prevent layout thrashing
+    function animateLoop() {
+        gsap.set(cursorDot, { x: targetX, y: targetY });
 
-    // Smooth cursor follow
-    function animateCursor() {
-        // Dot snaps fast
-        gsap.set(cursorDot, { x: dotX, y: dotY });
-
-        // Outline follows with lag
-        outX += (dotX - outX) * 0.12;
-        outY += (dotY - outY) * 0.12;
+        outX += (targetX - outX) * 0.12;
+        outY += (targetY - outY) * 0.12;
         gsap.set(cursorOutline, { x: outX, y: outY });
 
-        requestAnimationFrame(animateCursor);
+        // Float icons (Hero)
+        floatIcons.forEach(icon => {
+            const depth = parseFloat(icon.dataset.depth || 0.35);
+            gsap.set(icon, {
+                x: normX * depth * 35,
+                y: normY * depth * 35
+            });
+        });
+
+        // Skills cloud icons
+        cloudIcons.forEach(icon => {
+            const depth = parseFloat(icon.dataset.depth || 0.3);
+            gsap.set(icon, {
+                x: normX * depth * 35,
+                y: normY * depth * 22
+            });
+        });
+
+        requestAnimationFrame(animateLoop);
     }
-    animateCursor();
+    animateLoop();
 
     // Hover effects
     const hoverTargets = document.querySelectorAll(
-        'a, button, .magnetic-btn, .skill-tag, .social-card, .project-card, .highlight-item'
+        'a, button, .magnetic-btn, .skill-tag, .social-card, .project-card, .highlight-item, .readme-btn'
     );
 
     hoverTargets.forEach(el => {
@@ -76,6 +98,89 @@ if (cursorDot && cursorOutline) {
     });
     document.addEventListener('mouseenter', () => {
         gsap.to([cursorDot, cursorOutline], { opacity: 1, duration: 0.3 });
+    });
+}
+
+/* ─────────────────────────────────────────
+   3A. INTERACTIVE PLAY-PULL LANYARD CARD
+───────────────────────────────────────── */
+const cardContainer = document.getElementById('heroImageContainer');
+const lanyardCard = document.getElementById('heroImage');
+const lanyardPath = document.getElementById('lanyardPath');
+
+if (cardContainer && lanyardCard && lanyardPath) {
+    let startX, startY, initialEndX, initialEndY;
+
+    function initLanyardCoords() {
+        const containerRect = cardContainer.getBoundingClientRect();
+        const cardRect = lanyardCard.getBoundingClientRect();
+        
+        startX = containerRect.width / 2;
+        startY = 10;
+        
+        initialEndX = (cardRect.left + cardRect.width / 2) - containerRect.left;
+        initialEndY = cardRect.top - containerRect.top + 6;
+    }
+
+    function updateLanyard(xOffset = 0, yOffset = 0) {
+        if (startX === undefined) initLanyardCoords();
+        
+        const endX = initialEndX + xOffset;
+        const endY = initialEndY + yOffset;
+        
+        const ctrlX = (startX + endX) / 2;
+        const ctrlY = (startY + endY) / 2 + Math.abs(endX - startX) * 0.15 + 10;
+        
+        lanyardPath.setAttribute('d', `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`);
+    }
+
+    // Initialize Draggable interface on ID card
+    Draggable.create(lanyardCard, {
+        type: 'x,y',
+        edgeResistance: 0.5,
+        bounds: cardContainer,
+        throwProps: false,
+        onDragStart: function() {
+            document.body.classList.add('dragging-badge');
+        },
+        onDrag: function() {
+            updateLanyard(this.x, this.y);
+            // Twist rotation based on drag movement velocity & displacement
+            gsap.set(lanyardCard, {
+                rotateZ: this.x * 0.09,
+                rotateY: this.x * 0.05,
+                rotateX: -this.y * 0.04
+            });
+        },
+        onDragEnd: function() {
+            document.body.classList.remove('dragging-badge');
+            // Elastic spring back to home anchor point
+            gsap.to(lanyardCard, {
+                x: 0,
+                y: 0,
+                rotateZ: 0,
+                rotateY: 0,
+                rotateX: 0,
+                duration: 1.4,
+                ease: 'elastic.out(1, 0.4)',
+                onUpdate: function() {
+                    const xVal = gsap.getProperty(lanyardCard, "x");
+                    const yVal = gsap.getProperty(lanyardCard, "y");
+                    updateLanyard(xVal, yVal);
+                }
+            });
+        }
+    });
+
+    // Run first time to align path coordinate
+    setTimeout(() => {
+        initLanyardCoords();
+        updateLanyard(0, 0);
+    }, 450);
+
+    window.addEventListener('resize', () => {
+        initLanyardCoords();
+        updateLanyard(0, 0);
     });
 }
 
@@ -222,9 +327,9 @@ heroTL
     .to('.status-badge', {
         opacity: 1, y: 0, duration: 0.5, ease: 'power3.out',
     }, '-=0.3')
-    .to('#heroImage', {
-        opacity: 1, x: 0, duration: 0.9, ease: 'power3.out',
-        from: { x: 60 }
+    .to('#heroImageContainer', {
+        opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.5)',
+        from: { y: 50 }
     }, '-=1.2')
     .to('#scrollIndicator', {
         opacity: 0.7, duration: 0.5, ease: 'power2.out',
@@ -271,66 +376,17 @@ function erase() {
 setTimeout(type, 2800);
 
 /* ─────────────────────────────────────────
-   10. PARALLAX FLOATING ICONS (Hero)
+   10. PARALLAX FLOATING ICONS (Hero - Combined Cursor Loop)
 ───────────────────────────────────────── */
-const floatIcons = document.querySelectorAll('.float-icon');
-
-window.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-
-    floatIcons.forEach(icon => {
-        const depth = parseFloat(icon.dataset.depth || 0.3);
-        const xMove = dx * depth * 40;
-        const yMove = dy * depth * 40;
-        gsap.to(icon, {
-            x: xMove,
-            y: yMove,
-            duration: 0.8,
-            ease: 'power2.out',
-        });
-    });
-});
+// Handled in combined 60fps animateLoop loop above to prevent conflicts and layout thrashing
 
 /* ─────────────────────────────────────────
-   11. SKILLS ICON CLOUD PARALLAX
+   11. SKILLS ICON CLOUD ENTRANCE
 ───────────────────────────────────────── */
-const cloudIcons = document.querySelectorAll('.skill-cloud-icon');
-
-window.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-
-    cloudIcons.forEach(icon => {
-        const depth = parseFloat(icon.dataset.depth || 0.3);
-        const xMove = dx * depth * 30;
-        const yMove = dy * depth * 20;
-        gsap.to(icon, {
-            x: xMove,
-            y: yMove,
-            duration: 1.0,
-            ease: 'power2.out',
-        });
-    });
-});
-
-// Animate cloud icons on scroll trigger entrance
 gsap.from('.skill-cloud-icon', {
-    scrollTrigger: {
-        trigger: '#skills',
-        start: 'top 80%',
-    },
-    opacity: 0,
-    scale: 0,
-    duration: 0.6,
-    stagger: {
-        each: 0.08,
-        from: 'random',
-    },
+    scrollTrigger: { trigger: '#skills', start: 'top 80%' },
+    opacity: 0, scale: 0, duration: 0.6,
+    stagger: { each: 0.08, from: 'random' },
     ease: 'back.out(2)',
 });
 
@@ -501,7 +557,7 @@ gsap.from('.social-links a', {
 /* ─────────────────────────────────────────
    14. SCROLL-BASED PARALLAX (hero image)
 ───────────────────────────────────────── */
-gsap.to('#heroImage', {
+gsap.to('#heroImageContainer', {
     scrollTrigger: {
         trigger: '#hero',
         start: 'top top',
@@ -547,11 +603,15 @@ document.querySelectorAll('.skill-tag').forEach(tag => {
 });
 
 /* ─────────────────────────────────────────
-   16. PROJECT CARDS TILT ON HOVER
+   16. PROJECT CARDS TILT ON HOVER (Optimized)
 ───────────────────────────────────────── */
 document.querySelectorAll('.project-card').forEach(card => {
+    let rect = null;
+    card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+    });
     card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
+        if (!rect) rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         gsap.to(card, {
@@ -577,20 +637,25 @@ document.querySelectorAll('.project-card').forEach(card => {
    17. SOCIAL CARD TILT ON HOVER
 ───────────────────────────────────────── */
 document.querySelectorAll('.social-card').forEach(card => {
+    let rect = null;
+    card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+    });
     card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
+        if (!rect) rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         gsap.to(card, {
             rotateY: x * 8,
             rotateX: -y * 5,
-            duration: 0.4,
+            duration: 0.3,
             ease: 'power2.out',
             transformPerspective: 1000,
         });
     });
 
     card.addEventListener('mouseleave', () => {
+        rect = null;
         gsap.to(card, {
             rotateY: 0,
             rotateX: 0,

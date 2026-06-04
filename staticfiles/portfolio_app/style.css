@@ -70,9 +70,9 @@ body {
    Custom Cursor
    ===================== */
 .cursor-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--primary);
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
     border-radius: 50%;
     position: fixed;
     top: 0;
@@ -80,14 +80,14 @@ body {
     z-index: 9999;
     pointer-events: none;
     transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s, background 0.2s;
-    box-shadow: 0 0 10px var(--primary-glow), 0 0 20px var(--primary-glow);
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
 }
 
 .cursor-outline {
-    width: 40px;
-    height: 40px;
-    border: 1.5px solid rgba(99, 102, 241, 0.5);
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid rgba(6, 182, 212, 0.45);
     border-radius: 50%;
     position: fixed;
     top: 0;
@@ -95,22 +95,53 @@ body {
     z-index: 9998;
     pointer-events: none;
     transform: translate(-50%, -50%);
-    transition: all 0.1s linear;
-    backdrop-filter: invert(0.05);
+    transition: width 0.15s ease-out, height 0.15s ease-out, border-color 0.2s, background-color 0.2s;
+    backdrop-filter: invert(0.04);
+}
+
+/* Reticle ticks on outline cursor */
+.cursor-outline::before, .cursor-outline::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    transition: background-color 0.2s;
+}
+
+/* Vertical crosshair ticks */
+.cursor-outline::before {
+    top: -4px;
+    bottom: -4px;
+    left: calc(50% - 1px);
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent) 6px, transparent 6px, transparent calc(100% - 6px), var(--accent) calc(100% - 6px));
+}
+
+/* Horizontal crosshair ticks */
+.cursor-outline::after {
+    left: -4px;
+    right: -4px;
+    top: calc(50% - 1px);
+    height: 2px;
+    background: linear-gradient(to right, var(--accent) 6px, transparent 6px, transparent calc(100% - 6px), var(--accent) calc(100% - 6px));
 }
 
 body.cursor-hover .cursor-dot {
-    width: 14px;
-    height: 14px;
-    background: var(--secondary);
+    width: 10px;
+    height: 10px;
+    background-color: var(--secondary);
     box-shadow: 0 0 20px var(--secondary-glow);
 }
 
 body.cursor-hover .cursor-outline {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-color: var(--secondary);
     background: rgba(168, 85, 247, 0.05);
+}
+
+body.cursor-hover .cursor-outline::before,
+body.cursor-hover .cursor-outline::after {
+    background-color: var(--secondary);
 }
 
 /* =====================
@@ -550,7 +581,7 @@ body.cursor-hover .cursor-outline {
 }
 
 /* =====================
-   Hero Image
+   Lanyard Suspension Card & Rope
    ===================== */
 .hero-image-container {
     flex: 1;
@@ -559,93 +590,226 @@ body.cursor-hover .cursor-outline {
     align-items: center;
     position: relative;
     max-width: 480px;
+    min-height: 480px;
     z-index: 2;
     opacity: 0;
 }
 
-.image-wrapper {
-    width: 320px;
-    height: 320px;
-    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    padding: 4px;
-    animation: morphShape 10s ease-in-out infinite;
-    position: relative;
+.lanyard-rope-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     z-index: 2;
+    display: flex;
+    justify-content: center;
 }
 
-@keyframes morphShape {
-    0%   { border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
-    33%  { border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%; }
-    66%  { border-radius: 50% 50% 60% 40% / 40% 60% 50% 50%; }
-    100% { border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
-}
-
-.profile-photo {
+#lanyardSvg {
     width: 100%;
     height: 100%;
-    border-radius: inherit;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.lanyard-card {
+    position: relative;
+    width: 280px;
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 16px;
+    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    padding: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.55), 0 0 50px rgba(99, 102, 241, 0.05);
+    cursor: grab;
+    z-index: 10;
+    user-select: none;
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+
+.lanyard-card:hover {
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+.lanyard-card:active {
+    cursor: grabbing;
+}
+
+.lanyard-slot {
+    width: 48px;
+    height: 12px;
+    background: #1e293b;
+    border-radius: 9999px;
+    margin: 0 auto 16px;
+    border: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lanyard-inner-slot {
+    width: 24px;
+    height: 6px;
+    background: #030712;
+    border-radius: 9999px;
+}
+
+.badge-scanline {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.15;
+    border-radius: 16px;
+    background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(99,102,241,0.06), rgba(6,182,212,0.02), rgba(168,85,247,0.06));
+    background-size: 100% 4px, 6px 100%;
+}
+
+.badge-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.connected-dot {
+    color: var(--accent);
+    animation: pulseGlow 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; text-shadow: 0 0 8px var(--accent-glow); }
+}
+
+.badge-frame {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #070a13;
+}
+
+.badge-photo {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center top;
-    display: block;
-    filter: brightness(0.95) contrast(1.05) saturate(1.05);
-    transition: filter 0.5s;
 }
 
-.image-wrapper:hover .profile-photo {
-    filter: brightness(1.05) contrast(1.1) saturate(1.15);
-}
-
-.image-glow {
+.badge-glow-overlay {
     position: absolute;
-    inset: -20px;
-    border-radius: inherit;
-    background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-    z-index: 1;
-    animation: glowPulse 4s ease-in-out infinite;
-    pointer-events: none;
+    inset: 0;
+    background: linear-gradient(to top, rgba(3,7,18,0.7) 0%, transparent 40%);
 }
 
-@keyframes glowPulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
+.badge-meta {
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-align: left;
+    line-height: 1.6;
 }
 
-/* Orbital Rings */
-.image-ring {
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.meta-label {
+    color: var(--text-muted);
+}
+
+.meta-value {
+    color: var(--text-main);
+}
+
+.text-purple {
+    color: var(--secondary);
+}
+
+.badge-barcode {
+    margin-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.barcode-lines {
+    height: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0.5;
+}
+
+.b-line {
+    height: 100%;
+    background: var(--text-main);
+}
+.w-1 { width: 1px; }
+.w-2 { width: 2px; }
+.w-3 { width: 3px; }
+.w-4 { width: 4px; }
+
+.barcode-text {
+    font-size: 7px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    letter-spacing: 0.25em;
+}
+
+.lanyard-tooltip {
     position: absolute;
-    border-radius: 50%;
-    border: 1px solid;
-    animation: ringRotate linear infinite;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     pointer-events: none;
+    border-radius: 16px;
+    z-index: 15;
 }
 
-.ring-1 {
-    width: 380px;
-    height: 380px;
-    border-color: rgba(99, 102, 241, 0.2);
-    animation-duration: 20s;
+.lanyard-card:hover .lanyard-tooltip {
+    opacity: 1;
 }
 
-.ring-2 {
-    width: 450px;
-    height: 450px;
-    border-color: rgba(168, 85, 247, 0.12);
-    animation-duration: 30s;
-    animation-direction: reverse;
+.tooltip-text {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-main);
+    letter-spacing: 0.15em;
+    font-weight: bold;
 }
 
-.ring-3 {
-    width: 520px;
-    height: 520px;
-    border-color: rgba(6, 182, 212, 0.08);
-    border-style: dashed;
-    animation-duration: 40s;
+.tooltip-sub {
+    font-size: 8px;
+    font-family: var(--font-mono);
+    color: var(--primary-light);
+    letter-spacing: 0.1em;
 }
 
-@keyframes ringRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+body.dragging-badge {
+    cursor: grabbing;
+}
+body.dragging-badge .cursor-dot,
+body.dragging-badge .cursor-outline {
+    opacity: 0 !important;
 }
 
 /* =====================
