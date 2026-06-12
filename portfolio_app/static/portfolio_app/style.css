@@ -1899,7 +1899,7 @@ footer p {
 .readme-content h1 {
     font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem;
     background: linear-gradient(135deg, #fff, var(--primary));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;
 }
 
