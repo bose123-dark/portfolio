@@ -476,25 +476,33 @@ gsap.utils.toArray('.gsap-card').forEach((card, i) => {
 
     // Stagger tags entrance if they exist
     if (tags.length > 0) {
-        tl.from(tags, {
-            opacity: 0,
-            scale: 0.6,
-            y: 15,
-            stagger: 0.05,
-            duration: 0.4,
-            ease: 'back.out(1.5)'
-        }, '-=0.35'); // overlap with card animation
+        tl.fromTo(tags, 
+            { opacity: 0, scale: 0.6, y: 15 },
+            {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                stagger: 0.05,
+                duration: 0.4,
+                ease: 'back.out(1.5)'
+            }, 
+            '-=0.35'
+        ); // overlap with card animation
     }
 
     // Stagger list items if they exist (for Core Skills)
     if (listItems.length > 0) {
-        tl.from(listItems, {
-            opacity: 0,
-            x: -20,
-            stagger: 0.08,
-            duration: 0.4,
-            ease: 'power3.out'
-        }, '-=0.35'); // overlap with card animation
+        tl.fromTo(listItems,
+            { opacity: 0, x: -20 },
+            {
+                opacity: 1,
+                x: 0,
+                stagger: 0.08,
+                duration: 0.4,
+                ease: 'power3.out'
+            },
+            '-=0.35'
+        ); // overlap with card animation
     }
 });
 
