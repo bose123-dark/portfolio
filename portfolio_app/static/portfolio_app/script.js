@@ -452,39 +452,50 @@ gsap.utils.toArray('.gsap-reveal-stagger').forEach((el, i) => {
     });
 });
 
-// Skill cards
-gsap.utils.toArray('.gsap-card').forEach((el, i) => {
-    gsap.to(el, {
+// Skill cards and tags entry animation (unified timeline to prevent conflicts)
+gsap.utils.toArray('.gsap-card').forEach((card, i) => {
+    const tags = card.querySelectorAll('.skill-tag');
+    const listItems = card.querySelectorAll('.core-skills-list li');
+    
+    const tl = gsap.timeline({
         scrollTrigger: {
-            trigger: el,
+            trigger: card,
             start: 'top 85%',
             toggleActions: 'play none none none',
-        },
+        }
+    });
+
+    // Animate card entrance
+    tl.to(card, {
         opacity: 1,
         y: 0,
-        duration: 0.7,
-        delay: (i % 4) * 0.12,
-        ease: 'power3.out',
+        duration: 0.6,
+        delay: (i % 4) * 0.1,
+        ease: 'power3.out'
     });
-});
 
-// Skill tags pop-in animation
-document.querySelectorAll('.skill-category').forEach(category => {
-    const tags = category.querySelectorAll('.skill-tag');
-    ScrollTrigger.create({
-        trigger: category,
-        start: 'top 80%',
-        onEnter: () => {
-            gsap.from(tags, {
-                opacity: 0,
-                scale: 0.5,
-                y: 20,
-                stagger: 0.07,
-                duration: 0.5,
-                ease: 'back.out(2)',
-            });
-        },
-    });
+    // Stagger tags entrance if they exist
+    if (tags.length > 0) {
+        tl.from(tags, {
+            opacity: 0,
+            scale: 0.6,
+            y: 15,
+            stagger: 0.05,
+            duration: 0.4,
+            ease: 'back.out(1.5)'
+        }, '-=0.35'); // overlap with card animation
+    }
+
+    // Stagger list items if they exist (for Core Skills)
+    if (listItems.length > 0) {
+        tl.from(listItems, {
+            opacity: 0,
+            x: -20,
+            stagger: 0.08,
+            duration: 0.4,
+            ease: 'power3.out'
+        }, '-=0.35'); // overlap with card animation
+    }
 });
 
 // Timeline items
@@ -945,22 +956,7 @@ ScrollTrigger.create({
     },
 });
 
-/* ─────────────────────────────────────────
-   24. CORE SKILLS LIST STAGGER
-───────────────────────────────────────── */
-ScrollTrigger.create({
-    trigger: '#skillCore',
-    start: 'top 80%',
-    onEnter: () => {
-        gsap.from('#skillCore .core-skills-list li', {
-            opacity: 0,
-            x: -30,
-            stagger: 0.1,
-            duration: 0.5,
-            ease: 'power3.out',
-        });
-    },
-});
+
 
 /* ─────────────────────────────────────────
    25. PAGE LOAD — Refresh ScrollTrigger
