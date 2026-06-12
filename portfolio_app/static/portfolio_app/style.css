@@ -1066,6 +1066,7 @@ body.dragging-badge .cursor-outline {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.8rem;
+    align-items: start;
 }
 
 .skill-category {
@@ -1073,10 +1074,11 @@ body.dragging-badge .cursor-outline {
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     padding: 2.2rem;
-    backdrop-filter: blur(15px);
     transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 .skill-card-glow {
@@ -1087,6 +1089,8 @@ body.dragging-badge .cursor-outline {
     transition: opacity 0.3s;
     pointer-events: none;
     z-index: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
 }
 
 .skill-category:hover .skill-card-glow { opacity: 1; }
@@ -1124,51 +1128,40 @@ body.dragging-badge .cursor-outline {
     gap: 10px;
     position: relative;
     z-index: 1;
+    align-content: flex-start;
 }
 
 .skill-tag {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    background: rgba(15, 23, 42, 0.8);
-    padding: 7px 14px;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.65);
+    padding: 8px 16px;
     border-radius: 30px;
-    font-size: 0.83rem;
-    color: var(--text-muted);
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    font-size: 0.85rem;
+    color: var(--text-main);
+    border: 1px solid rgba(99, 102, 241, 0.15);
     font-family: var(--font-mono);
     cursor: default;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.skill-tag::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
-    border-radius: inherit;
 }
 
 .skill-tag:hover {
     color: #fff;
+    background: rgba(99, 102, 241, 0.15);
     border-color: var(--primary);
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
 }
-
-.skill-tag:hover::before { opacity: 0.15; }
 
 .skill-tag i {
     font-size: 1rem;
     transition: transform 0.3s;
 }
 
-.skill-tag:hover i { transform: scale(1.2); }
+.skill-tag:hover i {
+    transform: scale(1.2);
+}
 
 .skill-tag.glow {
     border-color: rgba(168, 85, 247, 0.25);
@@ -1177,10 +1170,13 @@ body.dragging-badge .cursor-outline {
 
 .skill-tag.glow:hover {
     border-color: var(--secondary);
+    background: rgba(168, 85, 247, 0.15);
     box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
 }
 
-.skill-tag.ai-tag i { color: var(--secondary); }
+.skill-tag.ai-tag i {
+    color: var(--secondary);
+}
 
 .core-skills-list {
     list-style: none;
